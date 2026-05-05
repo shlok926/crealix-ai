@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description"
+        content="AI-powered Instagram Bio Generator & Username Finder. Create stunning bios and usernames." />
+    <link rel="icon" type="image/svg+xml" href="public/favicon.svg" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <title>Crealix AI — Instagram Bio Generator</title>
+    <link rel="stylesheet" href="src/styles/index.css" />
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="sidebar" id="sidebar">
+            <!-- Rendered by renderSidebar() in main.js -->
+        </aside>
+        <div class="main-content" id="main-content">
+            <div class="mobile-topbar" id="mobile-topbar">
+                <button class="hamburger-btn" id="hamburger-btn" aria-label="Toggle sidebar">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round">
+                        <line x1="3" y1="6" x2="21" y2="6" />
+                        <line x1="3" y1="12" x2="21" y2="12" />
+                        <line x1="3" y1="18" x2="21" y2="18" />
+                    </svg>
+                </button>
+                <a class="mobile-logo" href="#/">
+                    <div class="sidebar-logo-icon">✦</div>
+                    <span class="sidebar-logo-text">Crealix AI</span>
+                </a>
+            </div>
+            <div class="sidebar-overlay" id="sidebar-overlay"></div>
+            <main id="page-content"></main>
+        </div>
+    </div>
+    <div id="toast-container"></div>
+    <div id="modal-overlay"></div>
+    <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>

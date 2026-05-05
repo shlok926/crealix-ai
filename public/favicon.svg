@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#8a2be2" />
+      <stop offset="50%" stop-color="#ff1493" />
+      <stop offset="100%" stop-color="#ff8c00" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  
+  <!-- Sleek gradient background -->
+  <rect width="100" height="100" rx="22" fill="url(#grad1)" />
+  
+  <!-- Subtle glass/inner glow effect -->
+  <rect x="2" y="2" width="96" height="96" rx="20" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-opacity="0.3" />
+  
+  <!-- Central Spark and Magic Wand Theme -->
+  <g filter="url(#glow)">
+    <!-- Main Sparkle Cross -->
+    <path d="M50 20 C 50 40, 40 50, 20 50 C 40 50, 50 60, 50 80 C 50 60, 60 50, 80 50 C 60 50, 50 40, 50 20 Z" fill="#ffffff" />
+    
+    <!-- Secondary Sparkles -->
+    <circle cx="75" cy="30" r="4.5" fill="#ffffff" />
+    <circle cx="30" cy="70" r="3" fill="#ffffff" opacity="0.8" />
+    <circle cx="80" cy="65" r="2.5" fill="#ffffff" opacity="0.6" />
+    <circle cx="25" cy="30" r="2" fill="#ffffff" opacity="0.7" />
+  </g>
+</svg>

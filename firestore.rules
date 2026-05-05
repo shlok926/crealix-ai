@@ -1,0 +1,38 @@
+rules_version = '2';
+
+// ═══════════════════════════════════════════════════════
+//  BioSpark AI — Firestore Security Rules
+//  Users can only read/write their own documents.
+//  All unauthenticated writes are denied.
+// ═══════════════════════════════════════════════════════
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Users collection ──────────────────────────────────
+    // Each user may only access their own profile document.
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      // Sub-collections (saved bios, usernames, captions, etc.)
+      match /{collection}/{docId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
+    // ── Usage tracking ────────────────────────────────────
+    match /usage/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // ── Public templates (read-only for all, write only for admins) ──
+    match /templates/{docId} {
+      allow read: if true;
+      allow write: if false; // Admin-only — manage from Firebase console
+    }
+
+    // ── Deny everything else ─────────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
