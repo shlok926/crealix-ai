@@ -4,6 +4,8 @@
 
 # CREALIX AI 🚀
 
+</div>
+
 <div align="center">
 
 ```
@@ -17,15 +19,11 @@
 
 </div>
 
-<div align="center">
-
 ### The Ultimate Open-Source AI Suite for Instagram Creators
 
 *Professional-grade content creation & growth platform for Instagram creators, influencers, and brand managers.*
 
 **Military-grade AI • Lightning-fast performance • Production-ready • 100% Open Source**
-
-</div>
 
 <div align="center">
 
