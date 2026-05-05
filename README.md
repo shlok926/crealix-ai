@@ -1,11 +1,8 @@
 <div align="center">
 
-<table width="100%">
-  <tr>
-    <td width="80" align="center">
-      <img src="https://raw.githubusercontent.com/shlok926/crealix-ai/main/public/crealix-logo.svg" width="80" alt="Crealix Logo"/>
-    </td>
-    <td align="center">
+![Crealix AI Logo](https://raw.githubusercontent.com/shlok926/crealix-ai/main/public/crealix-logo.svg)
+
+# CREALIX AI 🚀
 
 ```
  ██████╗ ██████╗ ███████╗ █████╗ ██╗     ██╗██╗  ██╗
@@ -15,9 +12,6 @@
 ╚██████╗╚██████╔╝███████╗██║  ██║███████╗██║██╔╝ ██╗
  ╚═════╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝╚═╝  ╚═╝
 ```
-    </td>
-  </tr>
-</table>
 
 ### The Ultimate Open-Source AI Suite for Instagram Creators
 
