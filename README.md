@@ -498,7 +498,7 @@ Created and maintained by **[Shlok Thorat (@shlok926)](https://github.com/shlok9
 
 - 💼 Full-Stack Developer | AI Enthusiast
 - 🚀 Open Source Contributor
-- 📧 Contact: shlok926@gmail.com
+- 📧 Contact: shlok.thorat.cyb@ghrcem.raisoni.net
 
 ---
 
@@ -544,6 +544,6 @@ If Crealix AI helped you create amazing content, consider:
 ---
 <div align="center">
   <h3>⭐ Don't forget to star this repo if you found it helpful! ⭐</h3>
-  <p><b>Built with ❤️ for the next generation of creators</b></p>
+  <p><b>Built with Shlok for the next generation of creators</b></p>
   <p>Power to the creative minds. 🚀</p>
 </div>
