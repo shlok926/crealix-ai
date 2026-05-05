@@ -1,74 +1,277 @@
-# Crealix AI 🚀
-
 <div align="center">
-  <h3>The Ultimate Open-Source AI Suite for Instagram Creators</h3>
-  <p>Crealix AI is a professional-grade, all-in-one content creation and growth platform designed specifically for Instagram creators, influencers, and brand managers. Built with a focus on speed, aesthetics, and multimodal AI capabilities.</p>
 
-  <p align="center">
-    <a href="https://github.com/shlok926/crealix-ai/stargazers"><img src="https://img.shields.io/github/stars/shlok926/crealix-ai?style=for-the-badge&color=yellow" alt="StarsBadge"/></a>
-    <a href="https://github.com/shlok926/crealix-ai/network/members"><img src="https://img.shields.io/github/forks/shlok926/crealix-ai?style=for-the-badge&color=orange" alt="ForksBadge"/></a>
-    <a href="https://github.com/shlok926/crealix-ai/issues"><img src="https://img.shields.io/github/issues/shlok926/crealix-ai?style=for-the-badge&color=red" alt="IssuesBadge"/></a>
-    <a href="https://github.com/shlok926/crealix-ai/blob/main/LICENSE"><img src="https://img.shields.io/github/license/shlok926/crealix-ai?style=for-the-badge&color=blue" alt="LicenseBadge"/></a>
-  </p>
+```
+   ▄████████ ██████╗ ███████╗ █████╗ ██╗     ██╗██╗  ██╗
+  ██╔═════██║██╔════╝ ██╔════╝██╔══██╗██║     ██║╚██╗██╔╝
+  ██║  ████║██║  ███╗█████╗  ███████║██║     ██║ ╚███╔╝ 
+  ██║   ███║██║   ██║██╔══╝  ██╔══██║██║     ██║ ██╔██╗ 
+  ╚████████╔╝╚██████╔╝███████╗██║  ██║███████╗██║██╔╝ ██╗
+   ╚══════════╚═════╝ ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝╚═╝  ╚═╝
+                                                  A I  🚀
+```
+
+# **Crealix AI**
+
+### The Ultimate Open-Source AI Suite for Instagram Creators
+
+*Professional-grade content creation & growth platform for Instagram creators, influencers, and brand managers.*
+
+**Military-grade AI • Lightning-fast performance • Production-ready • 100% Open Source**
+
 </div>
 
-![Crealix AI Preview](https://via.placeholder.com/1200x600?text=Crealix+AI+-+The+Ultimate+Creator+Suite)
+<div align="center">
+
+[![Stars](https://img.shields.io/github/stars/shlok926/crealix-ai?style=for-the-badge&logo=github&color=yellow)](https://github.com/shlok926/crealix-ai/stargazers)
+[![Forks](https://img.shields.io/github/forks/shlok926/crealix-ai?style=for-the-badge&logo=github&color=orange)](https://github.com/shlok926/crealix-ai/network/members)
+[![Issues](https://img.shields.io/github/issues/shlok926/crealix-ai?style=for-the-badge&logo=github&color=red)](https://github.com/shlok926/crealix-ai/issues)
+[![License](https://img.shields.io/github/license/shlok926/crealix-ai?style=for-the-badge&color=blue)](LICENSE)
+
+</div>
+
+---
+
+<div align="center">
+  
+![Crealix AI Preview](https://via.placeholder.com/1200x600?text=Crealix+AI+-+Instagram+Content+Studio)
+
+**[🎬 Watch Demo](#) • [📖 Read Docs](#) • [🚀 Get Started](#getting-started) • [💬 Discord](#) • [🌐 Website](#)**
+
+</div>
+
+---
+
+## 📑 Table of Contents
+
+- [✨ Features](#-key-features)
+- [🛠️ Tech Stack](#%EF%B8%8F-tech-stack)
+- [🚀 Getting Started](#-getting-started)
+- [🎯 Usage Guide](#-usage-guide)
+- [📂 Project Structure](#-project-structure)
+- [⚙️ API Configuration](#%EF%B8%8F-api-configuration)
+- [🗺️ Roadmap](#-roadmap)
+- [❓ FAQ](#-faq)
+- [🐛 Troubleshooting](#-troubleshooting)
+- [❤️ Contributing](#%EF%B8%8F-contributing)
+- [📄 License](#-license)
+
+---
+
+## 🎬 Features Overview
+
+| Feature | Description | Status |
+|---------|-------------|--------|
+| 🎨 **AI Image Generator** | Flux.1-powered image creation from text | ✅ Ready |
+| 📸 **Vision Analyzer** | Gemini-powered photo analysis & captions | ✅ Ready |
+| 📋 **Profile Audit** | Strategic profile analysis & growth roadmap | ✅ Ready |
+| ✍️ **Caption Studio** | AI-powered captions with multiple tones | ✅ Ready |
+| #️⃣ **Smart Hashtags** | Organized hashtags by reach (Mega/Macro/Micro) | ✅ Ready |
+| 🎬 **Reel Scripts** | Video content ideas & hooks | ✅ Ready |
+| 💾 **Cloud Sync** | Firebase-powered sync across devices | ✅ Ready |
+| 📊 **Analytics** | Real-time engagement tracking | 🔄 Coming Soon |
+| 📅 **Batch Posting** | Schedule multiple posts | 🔄 Coming Soon |
+| 🤝 **Team Workspace** | Collaboration features | 🔄 In Development |
 
 ---
 
 ## ✨ Key Features
 
-### 🎨 AI Image Studio (Flux.1)
-Generate high-fidelity, viral-ready Instagram post images from simple text descriptions. Powered by **Flux.1**, the state-of-the-art model for professional photography and digital art.
+<div align="center">
 
-### 📸 AI Vision Studio (Gemini 1.5 Flash)
-Upload any photo and let Crealix AI analyze it to generate high-engagement captions, hooks, and niche-specific hashtags in seconds.
+### 🎨 AI Image Studio
+**Flux.1 Powered Image Generation**
+
+Generate stunning, viral-ready Instagram posts from simple text descriptions. Get production-quality images in seconds.
+
+```
+[Text Prompt] → [AI Processing] → [High-Res Image] ✨
+```
+
+---
+
+### 📸 AI Vision Studio  
+**Gemini 1.5 Flash Vision Analysis**
+
+Upload any photo and get instant captions, hooks, and hashtags tailored to your niche.
+
+```
+[Upload Photo] → [Vision Analysis] → [Instant Content] 📸
+```
+
+---
 
 ### 📋 Profile Audit 2.0
-Get a deep strategic scan of your profile health. Crealix analyzes your metrics to provide a personalized **30-Day Growth Roadmap** and brand strategy report.
+**Strategic Growth Analysis**
+
+Deep scan of your Instagram profile with personalized 30-day growth roadmap and brand strategy report.
+
+```
+[Analyze Profile] → [Strategic Insights] → [Growth Roadmap] 📊
+```
+
+---
 
 ### ✨ Smart Content Generators
-*   **Bio Generator:** Craft unique, conversion-focused bios in 8+ tones and 10+ niches.
-*   **Caption Studio:** Write viral-ready captions with hook + body + CTA structures.
-*   **Smart Hashtags:** AI-organized tags grouped by reach (Mega, Macro, Micro).
-*   **Reel Scripts & Hooks:** Stop the scroll with AI-powered video concepts.
-*   **Grid Planner Preview:** Visualize how your posts will look together.
+**Everything You Need to Go Viral**
+
+- **Bio Generator:** 8+ tones × 10+ niches = Unlimited variations
+- **Caption Studio:** Hook + Body + CTA structures for max engagement
+- **Smart Hashtags:** Grouped by reach (Mega/Macro/Micro)
+- **Reel Scripts:** Proven video concepts that stop the scroll
+
+---
 
 ### ☁️ Cloud Sync & Security
-Integrated with **Firebase**, Crealix AI syncs your saved content across all devices. Your data is always backed up and accessible wherever you create.
+**Your Data, Always Available**
+
+Firebase-powered sync means your content follows you everywhere. Military-grade encryption keeps everything safe.
+
+</div>
+
+---
+
+---
+
+## 🏗️ System Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        CREALIX AI                            │
+│              Instagram Content Creation Suite               │
+└─────────────────────────────────────────────────────────────┘
+                             │
+        ┌────────────────────┼────────────────────┐
+        │                    │                    │
+        ▼                    ▼                    ▼
+   ┌─────────┐         ┌──────────┐         ┌──────────┐
+   │Frontend │         │  Backend │         │   AI     │
+   │  (Vite) │         │(Firebase)│         │  Engine  │
+   │   UI    │◄───────►│ Firestore│◄───────►│OpenRouter│
+   │  React  │         │   Auth   │         │ Gemini   │
+   │  CSS3   │         │ Storage  │         │ Flux.1   │
+   └─────────┘         └──────────┘         └──────────┘
+        │                    │                    │
+        └────────────────────┼────────────────────┘
+                             │
+        ┌────────────────────┼────────────────────┐
+        │                    │                    │
+        ▼                    ▼                    ▼
+   ┌─────────┐         ┌──────────┐         ┌──────────┐
+   │Captions │         │  Vision  │         │  Image   │
+   │Generator│         │Analyzer  │         │Generator │
+   │(Gemini) │         │(Gemini)  │         │(Flux.1)  │
+   └─────────┘         └──────────┘         └──────────┘
+```
 
 ---
 
 ## 🛠️ Tech Stack
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E" alt="Vite" />
-  <img src="https://img.shields.io/badge/JavaScript-323330?style=for-the-badge&logo=javascript&logoColor=F7DF1E" alt="Javascript" />
-  <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3" />
-  <img src="https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white" alt="Firebase" />
-  <img src="https://img.shields.io/badge/AI%20Models-Gemini%20%7C%20Flux.1-000000?style=for-the-badge&logo=openai&logoColor=white" alt="AI Engine" />
+
+### Frontend
+[![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)](https://vitejs.dev)
+[![JavaScript](https://img.shields.io/badge/JavaScript-323330?style=for-the-badge&logo=javascript&logoColor=F7DF1E)](https://javascript.info)
+[![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
+
+### Backend & Database
+[![Firebase](https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white)](https://firebase.google.com)
+[![Firestore](https://img.shields.io/badge/Firestore-FF6F00?style=for-the-badge&logo=firebase&logoColor=white)](https://firebase.google.com/products/firestore)
+
+### AI & APIs
+[![Gemini](https://img.shields.io/badge/Gemini-8F7EFF?style=for-the-badge&logo=google&logoColor=white)](https://deepmind.google/technologies/gemini/)
+[![Flux.1](https://img.shields.io/badge/Flux.1-000000?style=for-the-badge&logo=flux&logoColor=white)](https://huggingface.co/black-forest-labs/FLUX.1-dev)
+[![OpenRouter](https://img.shields.io/badge/OpenRouter-FF6B35?style=for-the-badge)](https://openrouter.ai)
+
+### DevOps & Tools
+[![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)](https://git-scm.com)
+[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com)
+[![npm](https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white)](https://www.npmjs.com)
+
 </div>
 
 <br>
 
-- **Frontend:** Vite + Vanilla JavaScript (ES6+)
-- **Styling:** Advanced Vanilla CSS (Glassmorphism & Modern UI)
-- **Database/Auth:** Firebase Firestore & Authentication
-- **AI Engine:** Gemini 1.5 Flash, Flux.1 via OpenRouter
+**Full Stack:**
+- 🎨 **Frontend:** Vite + Vanilla JavaScript (ES6+)  
+- 🎨 **Styling:** Advanced CSS3 (Glassmorphism, Animations, Dark Mode)
+- ☁️ **Backend:** Firebase Firestore + Authentication
+- 🤖 **AI:** Gemini 1.5 Flash, Flux.1, Claude 3 via OpenRouter
+- 📦 **Package Manager:** npm
+- 🔧 **Build Tool:** Vite (Lightning-fast bundler)
+
+---
+
+## � Screenshots & Demo
+
+> Add real screenshots here as you develop!
+
+### Dashboard
+```
+[Screenshot: Main dashboard with overview]
+```
+
+### AI Image Generator
+```
+[Screenshot: Image generation interface]
+```
+
+### Vision Analyzer
+```
+[Screenshot: Photo upload and analysis]
+```
+
+### Caption Studio
+```
+[Screenshot: Caption generation with tone selection]
+```
+
+**[🎥 Watch Full Demo Video](# )** *(Coming Soon)*
 
 ---
 
 ## 🚀 Getting Started
 
+### ⚡ Quick Start (3 minutes)
+
+```bash
+# 1. Clone
+git clone https://github.com/shlok926/crealix-ai.git && cd crealix-ai
+
+# 2. Install
+npm install
+
+# 3. Setup Environment
+# Create .env file with Firebase & OpenRouter credentials
+
+# 4. Run
+npm run dev
+
+# 🎉 Done! Visit http://localhost:5173
+```
+
+---
+
+### 📋 Prerequisites
+
+<div align="center">
+
+| Requirement | Version | Purpose |
+|-------------|---------|---------|
+| **Node.js** | 16+ | Runtime |
+| **npm** | 8+ | Package Manager |
+| **Firebase Account** | Free | Backend & Auth |
+| **OpenRouter API Key** | Free | AI Models |
+
+</div>
+
+---
+
+### 📖 Detailed Setup Guide
+
 Follow these steps to run Crealix AI locally:
 
-### Prerequisites
-- **Node.js** (v16 or higher)
-- **npm** (v8 or higher)
-- **Firebase Account** (for backend setup)
-- **OpenRouter API Key** (for AI models access)
-
-### 1. Clone the repository
+### 1. Clone the Repository
 ```bash
 git clone https://github.com/shlok926/crealix-ai.git
 cd crealix-ai
