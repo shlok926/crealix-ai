@@ -17,6 +17,8 @@
 
 </div>
 
+<div align="center">
+
 ### The Ultimate Open-Source AI Suite for Instagram Creators
 
 *Professional-grade content creation & growth platform for Instagram creators, influencers, and brand managers.*
