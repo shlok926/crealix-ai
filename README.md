@@ -71,44 +71,44 @@
 
 ---
 
-## ✨ Key Features
+## Key Features
 
 <div align="center">
 
-### 🎨 AI Image Studio
+### AI Image Studio
 **Flux.1 Powered Image Generation**
 
 Generate stunning, viral-ready Instagram posts from simple text descriptions. Get production-quality images in seconds.
 
 ```
-[Text Prompt] → [AI Processing] → [High-Res Image] ✨
+[Text Prompt] → [AI Processing] → [High-Res Image]
 ```
 
 ---
 
-### 📸 AI Vision Studio  
+### AI Vision Studio  
 **Gemini 1.5 Flash Vision Analysis**
 
 Upload any photo and get instant captions, hooks, and hashtags tailored to your niche.
 
 ```
-[Upload Photo] → [Vision Analysis] → [Instant Content] 📸
+[Upload Photo] → [Vision Analysis] → [Instant Content]
 ```
 
 ---
 
-### 📋 Profile Audit 2.0
+### Profile Audit 2.0
 **Strategic Growth Analysis**
 
 Deep scan of your Instagram profile with personalized 30-day growth roadmap and brand strategy report.
 
 ```
-[Analyze Profile] → [Strategic Insights] → [Growth Roadmap] 📊
+[Analyze Profile] → [Strategic Insights] → [Growth Roadmap]
 ```
 
 ---
 
-### ✨ Smart Content Generators
+### Smart Content Generators
 **Everything You Need to Go Viral**
 
 - **Bio Generator:** 8+ tones × 10+ niches = Unlimited variations
@@ -118,7 +118,7 @@ Deep scan of your Instagram profile with personalized 30-day growth roadmap and 
 
 ---
 
-### ☁️ Cloud Sync & Security
+### Cloud Sync & Security
 **Your Data, Always Available**
 
 Firebase-powered sync means your content follows you everywhere. Military-grade encryption keeps everything safe.
@@ -190,12 +190,12 @@ Firebase-powered sync means your content follows you everywhere. Military-grade 
 <br>
 
 **Full Stack:**
-- 🎨 **Frontend:** Vite + Vanilla JavaScript (ES6+)  
-- 🎨 **Styling:** Advanced CSS3 (Glassmorphism, Animations, Dark Mode)
-- ☁️ **Backend:** Firebase Firestore + Authentication
-- 🤖 **AI:** Gemini 1.5 Flash, Flux.1, Claude 3 via OpenRouter
-- 📦 **Package Manager:** npm
-- 🔧 **Build Tool:** Vite (Lightning-fast bundler)
+- **Frontend:** Vite + Vanilla JavaScript (ES6+)  
+- **Styling:** Advanced CSS3 (Glassmorphism, Animations, Dark Mode)
+- **Backend:** Firebase Firestore + Authentication
+- **AI:** Gemini 1.5 Flash, Flux.1, Claude 3 via OpenRouter
+- **Package Manager:** npm
+- **Build Tool:** Vite (Lightning-fast bundler)
 
 ---
 
@@ -300,7 +300,7 @@ VITE_OPENROUTER_API_KEY="your_openrouter_key"
 npm run dev
 ```
 
-The app will be live at `http://localhost:5173` 🎉
+The app will be live at `http://localhost:5173`
 
 ### 5. Build for production
 ```bash
@@ -483,32 +483,32 @@ Contributions are what make the open source community amazing! We love your inpu
 5. **Open** a Pull Request
 
 ### Areas to Contribute:
-- 🐛 Bug fixes
-- ✨ New features (hashtag strategies, reel formats, etc.)
-- 📚 Documentation improvements
-- 🎨 UI/UX enhancements
-- 🤖 AI model integrations
-- 🧪 Testing & quality assurance
+- Bug fixes
+- New features (hashtag strategies, reel formats, etc.)
+- Documentation improvements
+- UI/UX enhancements
+- AI model integrations
+- Testing & quality assurance
 
 ---
 
-## 👨‍💻 Author
+## Author
 
 Created and maintained by **[Shlok Thorat (@shlok926)](https://github.com/shlok926)**
 
-- 💼 Full-Stack Developer | AI Enthusiast
-- 🚀 Open Source Contributor
-- 📧 Contact: shlok.thorat.cyb@ghrcem.raisoni.net
+- Full-Stack Developer | AI Enthusiast
+- Open Source Contributor
+- Contact: shlok.thorat.cyb@ghrcem.raisoni.net
 
 ---
 
-## 🤝 Community
+## Community
 
 Have suggestions or want to contribute? 
-- **Star ⭐** this repository if you find it useful
-- **Fork 🍴** to create your own version
-- **Issues 🐛** - Report bugs or request features
-- **Discussions 💬** - Share ideas and feedback
+- **Star** this repository if you find it useful
+- **Fork** to create your own version
+- **Issues** - Report bugs or request features
+- **Discussions** - Share ideas and feedback
 
 ---
 
@@ -523,17 +523,17 @@ You can modify, distribute, and use the code with proper attribution.
 
 ---
 
-## 💝 Support
+## Support
 
 If Crealix AI helped you create amazing content, consider:
-- **Starring** ⭐ this repository
-- **Sharing** 🔗 with fellow creators
-- **Contributing** 💻 improvements or bug fixes
-- **Sponsoring** 💖 the project (coming soon)
+- **Starring** this repository
+- **Sharing** with fellow creators
+- **Contributing** improvements or bug fixes
+- **Sponsoring** the project (coming soon)
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - **Gemini 1.5 Flash** - For vision analysis
 - **Flux.1** - For high-quality image generation
