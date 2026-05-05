@@ -32,10 +32,10 @@
 ---
 
 <div align="center">
-  
-![Crealix AI Preview](https://via.placeholder.com/1200x600?text=Crealix+AI+-+Instagram+Content+Studio)
 
-**[🎬 Watch Demo](#) • [📖 Read Docs](#) • [🚀 Get Started](#getting-started) • [💬 Discord](#) • [🌐 Website](#)**
+![Crealix AI Logo](public/crealix-logo.svg)
+
+**[🎬 Live Demo](#) • [📖 Documentation](#) • [🚀 Get Started](#getting-started) • [💬 Community](#) • [🌐 Website](#)**
 
 </div>
 
