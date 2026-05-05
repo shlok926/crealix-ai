@@ -33,7 +33,7 @@
 
 <div align="center">
 
-![Crealix AI Logo](public/crealix-logo.svg)
+![Crealix AI Logo](https://raw.githubusercontent.com/shlok926/crealix-ai/main/public/crealix-logo.svg)
 
 **[🎬 Live Demo](#) • [📖 Documentation](#) • [🚀 Get Started](#getting-started) • [💬 Community](#) • [🌐 Website](#)**
 
