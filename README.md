@@ -62,6 +62,12 @@ Integrated with **Firebase**, Crealix AI syncs your saved content across all dev
 
 Follow these steps to run Crealix AI locally:
 
+### Prerequisites
+- **Node.js** (v16 or higher)
+- **npm** (v8 or higher)
+- **Firebase Account** (for backend setup)
+- **OpenRouter API Key** (for AI models access)
+
 ### 1. Clone the repository
 ```bash
 git clone https://github.com/shlok926/crealix-ai.git
@@ -74,11 +80,19 @@ npm install
 ```
 
 ### 3. Setup Environment Variables
-Configure your Firebase and AI credentials. Create a `.env` file in the root directory:
+Create a `.env` file in the root directory with your credentials:
 ```bash
-VITE_FIREBASE_API_KEY="your_api_key"
+# Firebase Configuration
+VITE_FIREBASE_API_KEY="your_firebase_api_key"
+VITE_FIREBASE_AUTH_DOMAIN="your_project.firebaseapp.com"
+VITE_FIREBASE_DATABASE_URL="your_database_url"
+VITE_FIREBASE_PROJECT_ID="your_project_id"
+VITE_FIREBASE_STORAGE_BUCKET="your_bucket"
+VITE_FIREBASE_MESSAGING_SENDER_ID="your_sender_id"
+VITE_FIREBASE_APP_ID="your_app_id"
+
+# AI Models API
 VITE_OPENROUTER_API_KEY="your_openrouter_key"
-# Add other necessary variables
 ```
 
 ### 4. Run the development server
@@ -88,24 +102,193 @@ npm run dev
 
 The app will be live at `http://localhost:5173` 🎉
 
+### 5. Build for production
+```bash
+npm run build
+```
+
+---
+
+## 🎯 Usage Guide
+
+### Dashboard
+- Overview of all your AI generation tools
+- Quick access to saved content
+- Profile growth metrics
+
+### AI Image Generator
+1. Enter a detailed prompt describing your desired Instagram post
+2. Adjust parameters (style, quality, aspect ratio)
+3. Click "Generate" and wait for Flux.1 to create your image
+4. Download or save to cloud
+
+### Vision Analyzer
+1. Upload a photo from your device
+2. Let Gemini 1.5 Flash analyze the image
+3. Get instant captions, hashtags, and hooks
+4. Copy directly or further customize
+
+### Caption Studio
+- **Hook Formulas:** Choose from proven engagement patterns
+- **Hook + Body + CTA:** Complete caption structure
+- **Tones:** Professional, Casual, Funny, Inspirational, etc.
+- **Niches:** Fashion, Tech, Fitness, Food, Travel, etc.
+
 ---
 
 ## 📂 Project Structure
 
 ```text
 crealix-ai/
-├── public/               # Static assets
+├── public/
+│   └── favicon.svg                    # App icon
 ├── src/
-│   ├── components/       # Reusable UI components (Sidebar, Navbar, Modal...)
-│   ├── pages/            # App pages (Dashboard, Generator, Vision, Audit...)
-│   ├── services/         # Firebase, AI models, and external APIs
-│   ├── styles/           # App-wide CSS styling
-│   ├── utils/            # Helper functions, config, and storage utilities
-│   └── main.js           # App entry point
-├── firestore.rules       # Firebase security rules
-├── package.json          # Node dependencies
-└── vite.config.js        # Vite bundler config
+│   ├── components/
+│   │   ├── modal.js                  # Reusable modal dialog
+│   │   ├── navbar.js                 # Top navigation bar
+│   │   ├── sidebar.js                # Left sidebar navigation
+│   │   ├── preview.js                # Content preview component
+│   │   ├── themeToggle.js            # Dark/light theme switcher
+│   │   └── toast.js                  # Notification system
+│   ├── pages/
+│   │   ├── dashboard.js              # Main dashboard
+│   │   ├── generator.js              # Caption generator
+│   │   ├── image-generator.js        # Flux.1 image generation
+│   │   ├── vision.js                 # Vision analysis tool
+│   │   ├── audit.js                  # Profile audit analyzer
+│   │   ├── hashtags.js               # Smart hashtag generator
+│   │   ├── bulk-generator.js         # Bulk content generation
+│   │   ├── captions.js               # Caption templates
+│   │   ├── reel-script.js            # Reel script generator
+│   │   ├── story-ideas.js            # Story content ideas
+│   │   ├── templates.js              # Content templates library
+│   │   ├── hooks.js                  # Hook formulas
+│   │   ├── saved.js                  # Saved content manager
+│   │   ├── home.js                   # Home/landing page
+│   │   ├── login.js                  # Authentication
+│   │   ├── onboarding.js             # User onboarding flow
+│   │   └── username.js               # User profile setup
+│   ├── services/
+│   │   ├── firebase.js               # Firebase config & auth
+│   │   ├── ai.js                     # AI model integration
+│   │   ├── imageAi.js                # Image generation service
+│   │   ├── cloudStorage.js           # Cloud file management
+│   │   ├── clients.js                # API client helpers
+│   │   └── userPlan.js               # User subscription management
+│   ├── styles/
+│   │   └── index.css                 # Global styles & animations
+│   ├── utils/
+│   │   ├── helpers.js                # Common utility functions
+│   │   ├── storage.js                # Local storage management
+│   │   ├── copy.js                   # Clipboard utilities
+│   │   ├── featureGate.js            # Feature flags
+│   │   ├── history.js                # Generation history
+│   │   └── offline.js                # Offline mode support
+│   └── main.js                        # App entry point
+├── firestore.rules                    # Firebase security rules
+├── index.html                         # HTML template
+├── package.json                       # Dependencies
+└── vite.config.js                     # Vite configuration
 ```
+
+---
+
+## ⚙️ API Configuration
+
+### Firebase Setup
+1. Go to [Firebase Console](https://console.firebase.google.com/)
+2. Create a new project
+3. Enable Firestore Database
+4. Enable Google Authentication
+5. Copy your config credentials to `.env`
+
+### OpenRouter Setup
+1. Sign up at [OpenRouter.ai](https://openrouter.ai/)
+2. Generate an API key
+3. Add it to your `.env` file
+4. Available models: Gemini 1.5 Flash, Claude 3, Flux.1
+
+---
+
+## 🗺️ Roadmap
+
+- [ ] **Mobile App** - React Native version for iOS & Android
+- [ ] **Batch Posting** - Schedule multiple posts at once
+- [ ] **Analytics Dashboard** - Real-time engagement tracking
+- [ ] **Collaboration** - Team workspace & sharing
+- [ ] **Premium Plans** - Advanced features & higher limits
+- [ ] **API Documentation** - For third-party integrations
+- [ ] **Browser Extension** - Quick caption generator for any website
+- [ ] **AI Video Generation** - Automated reel creation
+
+---
+
+## ❓ FAQ
+
+**Q: Is Crealix AI free to use?**
+A: Yes! The core features are completely free. Premium features may be added in the future.
+
+**Q: What AI models does Crealix use?**
+A: We use Gemini 1.5 Flash (vision), Flux.1 (image generation), and Claude 3 (text) via OpenRouter.
+
+**Q: Can I use generated content commercially?**
+A: Yes, all generated content is yours to use. Please check OpenRouter's terms for specific model licenses.
+
+**Q: Is my data secure?**
+A: Yes! We use Firebase for secure storage, and all data is encrypted. We don't sell or share user data.
+
+**Q: Can I self-host this?**
+A: Yes! Clone the repo and deploy to Vercel, Netlify, or your own server.
+
+---
+
+## 🐛 Troubleshooting
+
+### Issue: "Module not found" errors
+```bash
+# Clear node_modules and reinstall
+rm -rf node_modules package-lock.json
+npm install
+```
+
+### Issue: Firebase authentication not working
+- Verify your `.env` file has correct Firebase credentials
+- Check that Google Auth is enabled in Firebase Console
+- Clear browser cache and reload
+
+### Issue: Image generation takes too long
+- OpenRouter API might be busy; try again in a few seconds
+- Check your OpenRouter API key is valid
+- Verify you have remaining API credits
+
+### Issue: CSS styles not loading
+```bash
+# Rebuild the project
+npm run build
+# or restart dev server
+npm run dev
+```
+
+---
+
+## ❤️ Contributing
+
+Contributions are what make the open source community amazing! We love your input.
+
+### How to Contribute:
+1. **Fork** the Project
+2. **Create** your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. **Commit** your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. **Push** to the Branch (`git push origin feature/AmazingFeature`)
+5. **Open** a Pull Request
+
+### Areas to Contribute:
+- 🐛 Bug fixes
+- ✨ New features (hashtag strategies, reel formats, etc.)
+- 📚 Documentation improvements
+- 🎨 UI/UX enhancements
+- 🤖 AI model integrations
+- 🧪 Testing & quality assurance
 
 ---
 
@@ -113,22 +296,54 @@ crealix-ai/
 
 Created and maintained by **[Shlok Thorat (@shlok926)](https://github.com/shlok926)**
 
+- 💼 Full-Stack Developer | AI Enthusiast
+- 🚀 Open Source Contributor
+- 📧 Contact: shlok926@gmail.com
+
+---
+
+## 🤝 Community
+
+Have suggestions or want to contribute? 
+- **Star ⭐** this repository if you find it useful
+- **Fork 🍴** to create your own version
+- **Issues 🐛** - Report bugs or request features
+- **Discussions 💬** - Share ideas and feedback
+
 ---
 
 ## 📄 License
-Crealix AI is **Open Source** and released under the [MIT License](LICENSE). Feel free to fork, modify, and build your own versions!
+
+Crealix AI is released under the **[MIT License](LICENSE)**. 
+
+```text
+MIT License - Feel free to use this project for personal or commercial purposes.
+You can modify, distribute, and use the code with proper attribution.
+```
 
 ---
 
-## ❤️ Contributing
-Contributions are always welcome! Whether it's reporting a bug, proposing a new feature, or submitting a pull request.
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+## 💝 Support
+
+If Crealix AI helped you create amazing content, consider:
+- **Starring** ⭐ this repository
+- **Sharing** 🔗 with fellow creators
+- **Contributing** 💻 improvements or bug fixes
+- **Sponsoring** 💖 the project (coming soon)
+
+---
+
+## 🙏 Acknowledgments
+
+- **Gemini 1.5 Flash** - For vision analysis
+- **Flux.1** - For high-quality image generation
+- **Firebase** - For reliable backend infrastructure
+- **OpenRouter** - For seamless AI model integration
+- **Vite** - For blazing-fast development
 
 ---
 <div align="center">
-  <b>Built for the next generation of creators. Power to the creative minds. 🚀</b>
+  <h3>⭐ Don't forget to star this repo if you found it helpful! ⭐</h3>
+  <p><b>Built with ❤️ for the next generation of creators</b></p>
+  <p>Power to the creative minds. 🚀</p>
 </div>
