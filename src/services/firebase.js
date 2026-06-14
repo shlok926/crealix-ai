@@ -5,13 +5,13 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCxNtISW3S5Ka0G4ceWQYT7nDwUBoaK8bI",
-    authDomain: "biospark-2b7d8.firebaseapp.com",
-    projectId: "biospark-2b7d8",
-    storageBucket: "biospark-2b7d8.firebasestorage.app",
-    messagingSenderId: "987402095536",
-    appId: "1:987402095536:web:537631e2abd94c510b2475",
-    measurementId: "G-5R2V6F6D04"
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 const app = initializeApp(firebaseConfig);
