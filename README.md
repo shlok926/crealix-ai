@@ -32,7 +32,7 @@
 [![Issues](https://img.shields.io/github/issues/shlok926/crealix-ai?style=for-the-badge&logo=github&color=red)](https://github.com/shlok926/crealix-ai/issues)
 [![License](https://img.shields.io/github/license/shlok926/crealix-ai?style=for-the-badge&color=blue)](LICENSE)
 
-**[🎬 Live Demo](#) • [📖 Documentation](#) • [🚀 Get Started](#getting-started) • [💬 Community](#) • [🌐 Website](#)**
+**[🎬 Live Demo](https://crealix-ai-alpha.vercel.app) • [📖 Documentation](#) • [🚀 Get Started](#getting-started) • [💬 Community](#) • [🌐 Website](https://crealix-ai-alpha.vercel.app)**
 
 </div>
 
