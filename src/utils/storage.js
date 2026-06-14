@@ -79,6 +79,7 @@ function makeEntry(data) {
 }
 
 // ── Bios ─────────────────────────────────────────────────────
+export function getSavedBios() { return getList(KEYS.SAVED_BIOS); }
 export function saveBio(text) {
     const entry = makeEntry({ text });
     const list = getSavedBios();
