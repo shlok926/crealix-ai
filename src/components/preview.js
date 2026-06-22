@@ -7,7 +7,7 @@ export function renderPreview(container, { bio = '', username = '' } = {}) {
 
     container.innerHTML = `
     <div class="ig-preview-card">
-      <div class="ig-preview-header">📱 Profile Preview</div>
+      <div class="ig-preview-header">📱 Profile Preview — Illustrative</div>
       <div class="ig-preview-avatar-ring">
         <div class="ig-preview-avatar-ring-inner">👤</div>
       </div>
