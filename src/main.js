@@ -7,6 +7,7 @@ import { auth } from './services/firebase.js';
 import { getUserProfile, saveUserPlan, cachePlan, getCachedPlan } from './services/userPlan.js';
 import { onAuthStateChanged } from 'firebase/auth';
 import { checkRouteAccess } from './utils/featureGate.js';
+import { escapeHtml } from './utils/helpers.js';
 
 // Apply theme immediately to avoid flash
 (function() {
@@ -112,16 +113,24 @@ async function navigate() {
 
     // Lazy-load the page module and render
     try {
+        const loader = ROUTES[route] || ROUTES['/'];
         const renderPage = await loader();
         await renderPage(pageContent);
     } catch (err) {
         console.error('Navigation error:', err);
+        // If a dynamic import chunk fails to load, it's usually because of a new deploy. Force a reload.
+        if (err.message && err.message.toLowerCase().includes('dynamically imported module')) {
+            window.location.reload(true);
+            return;
+        }
+
         pageContent.innerHTML = `
         <div class="page page-narrow" style="text-align:center;padding-top:var(--space-2xl)">
             <h1 style="font-size:3rem;margin-bottom:var(--space-md)">😕</h1>
             <h2>Page Not Found</h2>
             <p style="color:var(--text-secondary);margin-top:8px">Something went wrong loading this page.</p>
-            <a href="#/" class="btn btn-primary mt-xl">Go Home</a>
+            <p style="color:var(--text-tertiary);font-size:0.8rem;margin-top:4px">${escapeHtml(err.message)}</p>
+            <a href="#/" class="btn btn-primary mt-xl" onclick="window.location.reload(true)">Reload App</a>
         </div>`;
     }
 
