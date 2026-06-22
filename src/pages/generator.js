@@ -184,8 +184,10 @@ export function renderGenerator(container) {
                 </div>
 
                 <div id="results-container"></div>
-                <div id="hashtags-container"></div>
-                <div id="emojis-container"></div>
+                <div style="display:flex; gap:24px; margin-top:32px; flex-wrap:wrap; margin-bottom: 40px;">
+                    <div id="hashtags-container" style="flex:1; min-width:300px;"></div>
+                    <div id="emojis-container" style="flex:1; min-width:300px;"></div>
+                </div>
             </div>
 
             <!-- RIGHT RAIL -->
@@ -379,7 +381,7 @@ function renderHashtags() {
     const c = document.getElementById('hashtags-container');
     if (!state.hashtags.length) return;
     c.innerHTML = `
-    <div class="card mt-xl">
+    <div class="card" style="height: 100%;">
         <h3 style="font-family:'Space Grotesk', sans-serif; font-size:1.1rem; margin-bottom:16px;">Suggested Hashtags</h3>
         <div style="display:flex; flex-wrap:wrap; gap:8px;">
             ${state.hashtags.map(t => `<span class="gen-chip" style="cursor:pointer" onclick="copyToClipboard('${escapeAttr(t)}')">${escapeHtml(t)}</span>`).join('')}
@@ -392,7 +394,7 @@ function renderEmojis() {
     const c = document.getElementById('emojis-container');
     if (!state.emojis.length) return;
     c.innerHTML = `
-    <div class="card mt-xl">
+    <div class="card" style="height: 100%;">
         <h3 style="font-family:'Space Grotesk', sans-serif; font-size:1.1rem; margin-bottom:8px;">Emoji Suggestions</h3>
         <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:16px;">Click to copy</p>
         <div style="display:flex; gap:12px; flex-wrap:wrap;">

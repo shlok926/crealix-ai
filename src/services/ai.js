@@ -169,7 +169,8 @@ export async function generateEmojis(bioText) {
         'Suggest 8-12 emojis for an Instagram bio. Return ONLY emojis separated by spaces. No text.',
         `Suggest emojis for: "${bioText}"`
     );
-    return raw.trim().split(/\s+/).filter(e => e.length <= 4);
+    const matches = raw.match(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu) || [];
+    return [...new Set(matches)].slice(0, 12);
 }
 
 // ── Profile Audit 2.0 ──────────────────────────────────────────
