@@ -67,18 +67,26 @@ export async function analyzeImage(base64Image, userPrompt) {
 // ── Bio Generation ─────────────────────────────────────────────
 export async function generateBios(description, tone, niche, format = 'bullet') {
     const formatInstructions = {
-        short: 'Keep it extremely short and impactful. Max 80 chars.',
-        bullet: 'Use emojis as bullet points with hard line breaks.',
-        emoji: 'Include 4-6 relevant emojis that match the vibe.',
-        minimalist: 'Use very few or no emojis, lowercase, clean look.',
-        cta: 'End with a call to action pointing downward.'
+        short: 'Structure: [Impactful Title] | [Key Skill] | [CTA]. Max 80 chars.',
+        bullet: 'Structure MUST use bullet points: \\n• [Identity/Title]\\n• [What you do/Value]\\n• [Achievement/Credibility]\\n👇 [Call to Action]',
+        emoji: 'Structure: [Emoji] [Identity] | [Emoji] [Value] | [Emoji] [CTA]. Use 4-6 emojis.',
+        minimalist: 'lowercase only. structure: [who you are] • [what you build] • [where to find you]. strictly NO emojis.',
+        cta: 'Structure: [Catchy hook] | [Your Expertise] \\n👇 [Strong Call to Action]'
     };
     const fmtHint = formatInstructions[format] || formatInstructions.bullet;
 
-    const raw = await callAI(
-        `You are an expert Instagram bio creator. Generate exactly 3 unique Instagram bios. Each MUST be under 150 characters. Format: numbered 1. 2. 3. on separate lines. Match the tone. No explanation. ${fmtHint}`,
-        `Create 3 Instagram bios for: "${description}"\nTone: ${tone}\nNiche: ${niche}`
-    );
+    const systemPrompt = `You are an elite Instagram Branding Expert. Generate EXACTLY 3 unique, professional Instagram bios.
+CRITICAL RULES:
+1. You MUST strictly follow this structure: ${fmtHint}
+2. Tone must be strongly: ${tone}.
+3. Tailor keywords for the niche: ${niche}.
+4. Length: Strictly under 150 characters per bio.
+5. Output format MUST be a numbered list (1. 2. 3.) on separate lines.
+Do NOT output any explanations, conversational text, or quotes. Only the 3 bios.`;
+
+    const userPrompt = `Convert these details into 3 Instagram bios:\n"${description}"`;
+
+    const raw = await callAI(systemPrompt, userPrompt);
     return parseBios(raw);
 }
 
