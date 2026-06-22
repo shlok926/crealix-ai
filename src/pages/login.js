@@ -105,7 +105,7 @@ export function renderLoginPage(container) {
         if (confirmInput) confirmInput.required = false;
         
         const toggleBtn = document.getElementById('toggle-email-mode');
-        if(toggleBtn) toggleBtn.innerHTML = 'Don\\'t have an account? <span style="color:var(--primary-color)">Sign Up</span>';
+        if(toggleBtn) toggleBtn.innerHTML = "Don't have an account? <span style='color:var(--primary-color)'>Sign Up</span>";
     });
 
     document.getElementById('primary-signup-btn')?.addEventListener('click', () => {
@@ -141,7 +141,7 @@ export function renderLoginPage(container) {
         
         e.currentTarget.innerHTML = isEmailSignUp 
             ? 'Already have an account? <span style="color:var(--primary-color)">Sign In</span>' 
-            : 'Don\'t have an account? <span style="color:var(--primary-color)">Sign Up</span>';
+            : "Don't have an account? <span style='color:var(--primary-color)'>Sign Up</span>";
     });
 
     document.getElementById('login-email-form')?.addEventListener('submit', (e) => {
