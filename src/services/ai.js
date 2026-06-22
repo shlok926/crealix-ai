@@ -27,7 +27,10 @@ async function callAI(systemPrompt, userPrompt) {
         throw new Error(err.error?.message || `API error: ${response.status}`);
     }
     const data = await response.json();
-    return data.choices?.[0]?.message?.content || '';
+    let content = data.choices?.[0]?.message?.content || '';
+    // Strip <think>...</think> reasoning blocks for deepseek-r1 style models
+    content = content.replace(/<think>[\s\S]*?<\/think>\n*/g, '').trim();
+    return content;
 }
 
 // ── Vision Support ─────────────────────────────────────────────
@@ -61,7 +64,9 @@ export async function analyzeImage(base64Image, userPrompt) {
         throw new Error(err.error?.message || `Vision API error: ${response.status}`);
     }
     const data = await response.json();
-    return data.choices?.[0]?.message?.content || '';
+    let content = data.choices?.[0]?.message?.content || '';
+    content = content.replace(/<think>[\s\S]*?<\/think>\n*/g, '').trim();
+    return content;
 }
 
 // ── Bio Generation ─────────────────────────────────────────────
@@ -367,13 +372,26 @@ function parseBulkCaptions(raw) {
 // ── Parse helpers ──────────────────────────────────────────────
 function parseBios(raw) {
     const lines = raw.split('\n').filter(l => l.trim());
-    const bios = [];
+    
+    // Try to find lines that start with numbers (1. 2. 3.)
+    let bios = [];
     for (const line of lines) {
-        const cleaned = line.replace(/^\d+[\.\)\-]\s*/, '').trim();
-        if (cleaned && cleaned.length > 5) bios.push(cleaned);
-        if (bios.length >= 3) break;
+        if (/^\d+[\.\)\-]\s*/.test(line)) {
+            const cleaned = line.replace(/^\d+[\.\)\-]\s*/, '').trim();
+            if (cleaned && cleaned.length > 5) bios.push(cleaned);
+        }
     }
-    return bios.length > 0 ? bios : [raw.trim()];
+    
+    // Fallback: if no numbered lines, just take the first 3 lines
+    if (bios.length === 0) {
+        for (const line of lines) {
+            const cleaned = line.replace(/^\d+[\.\)\-]\s*/, '').trim();
+            if (cleaned && cleaned.length > 5) bios.push(cleaned);
+            if (bios.length >= 3) break;
+        }
+    }
+    
+    return bios.length > 0 ? bios.slice(0, 3) : [raw.trim()];
 }
 
 function parseUsernames(raw) {
