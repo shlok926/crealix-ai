@@ -46,7 +46,8 @@ const ROUTES = {
     '/reel-script': () => import('./pages/reel-script.js').then(m => m.renderReelScript),
     '/story-ideas': () => import('./pages/story-ideas.js').then(m => m.renderStoryIdeas),
     '/image-gen': () => import('./pages/image-generator.js').then(m => m.renderImageGenerator),
-    '/vision': () => import('./pages/vision.js').then(m => m.renderVisionPage)
+    '/vision': () => import('./pages/vision.js').then(m => m.renderVisionPage),
+    '/settings': () => import('./pages/settings.js').then(m => m.renderSettings)
 };
 
 function getRoute() {
