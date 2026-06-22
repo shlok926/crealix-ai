@@ -5,7 +5,6 @@ import { updatePassword, deleteUser } from 'firebase/auth';
 
 export function openSettingsModal() {
     const overlay = document.getElementById('modal-overlay');
-    const currentKey = getApiKey();
     const voice = getBrandVoice();
 
     overlay.innerHTML = `
