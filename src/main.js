@@ -37,7 +37,6 @@ const ROUTES = {
     '/saved': () => import('./pages/saved.js').then(m => m.renderSaved),
     '/smart-hashtags': () => import('./pages/hashtags.js').then(m => m.renderHashtagsPage),
     '/captions': () => import('./pages/captions.js').then(m => m.renderCaptionsPage),
-    '/audit': () => import('./pages/audit.js').then(m => m.renderAuditPage),
     '/hooks': () => import('./pages/hooks.js').then(m => m.renderHooksPage),
     '/dashboard': () => import('./pages/dashboard.js').then(m => m.renderDashboard),
     // ── New role-based routes ─────────────────────────────────
