@@ -41,10 +41,6 @@ export function initAuthListener(getRoute) {
 // Navigation links
 const NAV_LINKS = [
     {
-        p: '/', l: 'Home',
-        svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`
-    },
-    {
         p: '/dashboard', l: 'Dashboard',
         svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="18" height="7"/></svg>`
     },
@@ -152,7 +148,7 @@ export function renderSidebar(route, currentUser = null, currentPlan = 'free') {
 
     sidebar.innerHTML = `
         <div class="sidebar-header">
-            <a class="sidebar-logo" href="#/">
+            <a class="sidebar-logo" href="#/dashboard">
                 <div class="sidebar-logo-icon">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
                 </div>
