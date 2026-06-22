@@ -5,7 +5,7 @@
 
 import { loginWithGoogle } from '../components/sidebar.js';
 import { auth } from '../services/firebase.js';
-import { RecaptchaVerifier, signInWithPhoneNumber, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { RecaptchaVerifier, signInWithPhoneNumber, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { showToast } from '../components/toast.js';
 
 export function renderLoginPage(container) {
@@ -78,19 +78,24 @@ export function renderLoginPage(container) {
             </div>
 
             <!-- Hidden Email Input Form -->
-            <div id="login-email-form" style="display:none; text-align:left;">
+            <form id="login-email-form" style="display:none; text-align:left;">
                 <label class="form-label">Email Address</label>
-                <input type="email" class="form-input" placeholder="you@example.com" id="email-input" style="width:100%; margin-bottom: 16px;">
+                <input type="email" class="form-input" placeholder="you@example.com" id="email-input" autocomplete="username" style="width:100%; margin-bottom: 16px;" required>
                 
                 <label class="form-label mt-sm">Password</label>
-                <input type="password" class="form-input" placeholder="••••••••" id="password-input" style="width:100%; margin-bottom: 24px;">
+                <input type="password" class="form-input" placeholder="••••••••" id="password-input" autocomplete="current-password" style="width:100%; margin-bottom: 24px;" required>
                 
-                <button class="btn btn-primary" id="email-submit-btn" style="width:100%;">Sign In</button>
-                <div style="text-align:center; margin-top:12px;">
-                    <a href="#" id="toggle-email-mode" style="color:var(--text-secondary); font-size:14px; text-decoration:none;">Don't have an account? <span style="color:var(--primary-color)">Sign Up</span></a>
+                <div id="confirm-password-group" style="display:none;">
+                    <label class="form-label mt-sm">Confirm Password</label>
+                    <input type="password" class="form-input" placeholder="••••••••" id="confirm-password-input" autocomplete="new-password" style="width:100%; margin-bottom: 24px;">
                 </div>
-                <button class="btn btn-secondary mt-sm" id="back-from-email" style="width:100%;">← Back</button>
-            </div>
+                
+                <button type="submit" class="btn btn-primary" id="email-submit-btn" style="width:100%;">Sign In</button>
+                <div style="text-align:center; margin-top:12px;">
+                    <button type="button" id="toggle-email-mode" style="background:none;border:none;color:var(--text-secondary); font-size:14px; text-decoration:none; cursor:pointer;">Don't have an account? <span style="color:var(--primary-color)">Sign Up</span></button>
+                </div>
+                <button type="button" class="btn btn-secondary mt-sm" id="back-from-email" style="width:100%;">← Back</button>
+            </form>
 
             <p class="login-terms">
                 By continuing, you agree to our Terms of Service & Privacy Policy.
@@ -185,26 +190,44 @@ export function renderLoginPage(container) {
         e.preventDefault();
         isEmailSignUp = !isEmailSignUp;
         document.getElementById('email-submit-btn').textContent = isEmailSignUp ? 'Create Account' : 'Sign In';
+        document.getElementById('password-input').autocomplete = isEmailSignUp ? 'new-password' : 'current-password';
+        document.getElementById('confirm-password-group').style.display = isEmailSignUp ? 'block' : 'none';
+        
+        const confirmInput = document.getElementById('confirm-password-input');
+        if (confirmInput) confirmInput.required = isEmailSignUp;
+        
         e.currentTarget.innerHTML = isEmailSignUp 
             ? 'Already have an account? <span style="color:var(--primary-color)">Sign In</span>' 
             : 'Don\'t have an account? <span style="color:var(--primary-color)">Sign Up</span>';
     });
 
-    document.getElementById('email-submit-btn')?.addEventListener('click', () => {
+    document.getElementById('login-email-form')?.addEventListener('submit', (e) => {
+        e.preventDefault(); // Prevent page reload but allow browser to capture password
         const email = document.getElementById('email-input').value;
         const password = document.getElementById('password-input').value;
-        if (!email || !password) {
-            showToast('Please enter both email and password', 'error');
-            return;
-        }
-
+        
         if (isEmailSignUp) {
+            const confirm = document.getElementById('confirm-password-input').value;
+            if (password !== confirm) {
+                showToast('Passwords do not match', 'error');
+                return;
+            }
             createUserWithEmailAndPassword(auth, email, password)
-                .then(() => showToast('Account created successfully!', 'success'))
+                .then((userCredential) => {
+                    sendEmailVerification(userCredential.user).then(() => {
+                        showToast('Account created! Please check your email to verify.', 'success');
+                    });
+                })
                 .catch((error) => showToast('Failed to create account: ' + error.message, 'error'));
         } else {
             signInWithEmailAndPassword(auth, email, password)
-                .then(() => showToast('Signed in successfully!', 'success'))
+                .then((userCredential) => {
+                    if (!userCredential.user.emailVerified) {
+                        showToast('Please verify your email before using all features.', 'warning');
+                    } else {
+                        showToast('Signed in successfully!', 'success');
+                    }
+                })
                 .catch((error) => showToast('Failed to sign in: ' + error.message, 'error'));
         }
     });
