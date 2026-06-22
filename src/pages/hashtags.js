@@ -239,7 +239,7 @@ export function renderHashtagsPage(container) {
 function updateCharCount(len) {
     const el = document.getElementById('hash-char-count');
     if (!el) return;
-    el.textContent = \`\${len}/300\`;
+    el.textContent = `${len}/300`;
     el.style.color = len > 280 ? 'var(--accent-red)' : len > 200 ? 'var(--accent-orange)' : 'var(--text-tertiary)';
 }
 
