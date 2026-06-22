@@ -112,9 +112,8 @@ async function navigate() {
 
     // Lazy-load the page module and render
     try {
-        const loader = ROUTES[route] || ROUTES['/'];
         const renderPage = await loader();
-        renderPage(pageContent);
+        await renderPage(pageContent);
     } catch (err) {
         console.error('Navigation error:', err);
         pageContent.innerHTML = `

@@ -39,7 +39,12 @@ let state = {
 
 export async function renderAuditPage(container) {
     if (auth.currentUser) {
-        state.pastAudits = await fetchItemsFromCloud(auth.currentUser.uid, 'audits');
+        try {
+            state.pastAudits = await fetchItemsFromCloud(auth.currentUser.uid, 'audits');
+        } catch (e) {
+            console.error('Failed to fetch audits:', e);
+            state.pastAudits = [];
+        }
     }
 
     renderPageShell(container, {
