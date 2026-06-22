@@ -66,7 +66,7 @@ export async function renderDashboard(container) {
 
     container.innerHTML = `
     ${dashStyle}
-    <div class="page" style="max-width:1400px; margin: 0 auto; padding: 0 24px;">
+    <div class="page" style="width:100%; padding: 0 24px;">
         
         <!-- TOPBAR -->
         <div class="dash-topbar" id="dashboard-topbar">
@@ -101,12 +101,6 @@ export async function renderDashboard(container) {
                         <div class="stat-card-value" style="font-family:'JetBrains Mono', monospace;">${totalSaved}</div>
                         <div class="stat-card-desc">Saved items across all tools</div>
                         <a href="#/saved" class="btn btn-secondary" style="font-size:0.8rem; padding:6px 12px; display:inline-block;">Open Library &rarr;</a>
-                    </div>
-                    <div class="stat-card" style="background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(37,99,235,0.05)); border-color: rgba(139,92,246,0.2);">
-                        <div class="stat-card-title" style="color:var(--primary-color)">Current Plan</div>
-                        <div class="stat-card-value">Free Tier</div>
-                        <div class="stat-card-desc">Basic features unlocked</div>
-                        <button class="btn btn-primary" style="font-size:0.8rem; padding:6px 12px; width:100%;">Upgrade to Pro ✨</button>
                     </div>
                 </div>
 
