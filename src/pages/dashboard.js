@@ -29,6 +29,7 @@ export async function renderDashboard(container) {
     // CSS specifically for dashboard
     const dashStyle = `
     <style>
+        #page-content { max-width: 100% !important; padding-top: 24px !important; }
         .dash-topbar { display:flex; justify-content:flex-end; align-items:center; gap:16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
         .dash-topbar-icon { background:transparent; border:1px solid var(--border-color); color:var(--text-primary); width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:0.2s; }
         .dash-topbar-icon:hover { background:var(--bg-secondary); }
