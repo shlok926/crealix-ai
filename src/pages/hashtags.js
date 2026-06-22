@@ -1,12 +1,15 @@
 // ==================== Smart Hashtags Page ====================
 import { generateSmartHashtags } from '../services/ai.js';
-import { getApiKey, saveHashtag, saveCaption, incrementUsage, checkUsageLimit, getBrandVoice, getTheme, setTheme } from '../utils/storage.js';
+import { getApiKey, saveHashtag, saveCaption, incrementUsage, checkUsageLimit, getBrandVoice } from '../utils/storage.js';
 import { copyToClipboard } from '../utils/copy.js';
 import { showToast } from '../components/toast.js';
 import { openSettingsModal } from '../components/modal.js';
 import { escapeHtml, escapeAttr } from '../utils/helpers.js';
 import { cacheContent, getCachedContent, isOffline } from '../utils/offline.js';
-import { auth } from '../services/firebase.js';
+import { renderPageShell } from '../components/pageShell.js';
+import { renderPillGroup, handlePillGroupClick } from '../components/pillGroup.js';
+import { renderHelperHint } from '../components/helperHint.js';
+import { renderEmptyState, renderLoadingState } from '../components/resultPanel.js';
 
 const CONTENT_TYPES = [
     { id: 'post', label: 'Standard Post', icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>' },
@@ -30,210 +33,105 @@ let state = { content: '', type: 'post', niche: 'general', results: null, captio
 
 export function renderHashtagsPage(container) {
     const voice = getBrandVoice();
-    const user = auth.currentUser;
-    const name = user?.displayName ? user.displayName.split(' ')[0] : 'Creator';
+    const cached = getCachedContent('hashtags');
     
     if (!state.content && voice.niche) {
         state.niche = NICHES.find(n => n.label === voice.niche)?.id || 'general';
     }
 
-    const typeChips = CONTENT_TYPES.map(t =>
-        `<button class="gen-chip ${state.type === t.id ? 'selected' : ''}" data-type="${t.id}">
-            ${t.icon} ${t.label}
-        </button>`
-    ).join('');
-    
-    const nicheChips = NICHES.map(n =>
-        `<button class="gen-chip ${state.niche === n.id ? 'selected' : ''}" data-niche="${n.id}">
-            ${n.icon} ${n.label}
-        </button>`
-    ).join('');
-
-    const cached = getCachedContent('hashtags');
-    const offlineBanner = (isOffline() && cached) ? `
-        <div class="offline-banner" style="margin-bottom:24px;">
-            📵 Offline — showing cached results
-        </div>` : '';
-
-    const hashStyles = `
-    <style>
-        .dash-topbar { display:flex; justify-content:flex-end; align-items:center; gap:16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
-        .dash-topbar-icon { background:transparent; border:1px solid var(--border-color); color:var(--text-primary); width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:0.2s; }
-        .dash-topbar-icon:hover { background:var(--bg-secondary); }
-        .dash-avatar { width:40px; height:40px; border-radius:50%; background: linear-gradient(135deg, var(--accent-purple), var(--primary-color)); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; cursor:pointer; }
-        
-        .dash-layout { display:flex; gap: 32px; align-items:flex-start; }
-        .dash-main { flex: 1.8; min-width:0; }
-        .dash-rail { width: 340px; flex-shrink:0; display:flex; flex-direction:column; gap:24px; position: sticky; top: 24px; align-self: start; }
-
-        @media (max-width: 1024px) {
-            .dash-layout { flex-direction:column; }
-            .dash-rail { width: 100%; position: static; }
-        }
-
-        .chip-group-wrap { display:flex; flex-wrap:wrap; gap:8px; }
-        .gen-chip { 
-            padding: 8px 16px; border-radius: 999px; background: var(--bg-card); 
-            border: 1px solid var(--border-color); color: var(--text-secondary); 
-            font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s;
-            display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
-        }
-        .gen-chip:hover { background: var(--bg-card-hover); color: var(--text-primary); }
-        .gen-chip.selected { 
-            background: rgba(139, 92, 246, 0.15);
-            border: 1px solid var(--primary-color); 
-            color: var(--text-primary);
-        }
-
-        .gen-textarea-wrapper {
-            position: relative; background: var(--bg-input); border: 1px solid var(--border-color);
-            border-radius: 12px; padding: 16px; transition: border-color 0.2s;
-        }
-        .gen-textarea-wrapper:focus-within { border-color: var(--primary-color); }
-        .gen-textarea {
-            width: 100%; min-height: 120px; background: transparent; border: none; outline: none;
-            color: var(--text-primary); font-family: 'Inter', sans-serif; resize: none;
-            line-height: 1.5; font-size: 0.95rem; margin-bottom: 24px; overflow: hidden;
-        }
-        .gen-textarea-footer {
-            position: absolute; bottom: 12px; right: 16px; display: flex;
-            justify-content: flex-end; align-items: center; pointer-events: none;
-        }
-        
-        .gradient-icon-chip {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.1));
-            color: var(--primary-color);
-            border: 1px solid rgba(139, 92, 246, 0.2);
-            width: 48px; height: 48px; border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            margin-bottom: 16px;
-        }
-        .hashtag-list-chip {
-            display: inline-block; padding: 6px 12px; border-radius: 6px;
-            background: var(--bg-input); border: 1px solid var(--border-color);
-            font-size: 0.85rem; color: var(--text-primary); margin-right: 6px; margin-bottom: 8px;
-            cursor: pointer; transition: 0.2s;
-        }
-        .hashtag-list-chip:hover { border-color: var(--primary-color); color: var(--primary-color); }
-    </style>`;
-
-    container.innerHTML = `
-    ${hashStyles}
-    <div class="page" style="width:100%; padding: 0 24px;">
-        <!-- TOPBAR -->
-        <div class="dash-topbar" id="dashboard-topbar">
-            <div style="flex:1;"></div>
-            <button class="dash-topbar-icon" id="dash-theme-btn" title="Toggle Theme">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-            </button>
-            <button class="dash-topbar-icon" title="Notifications">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-            </button>
-            <div class="dash-avatar" onclick="window.location.hash='#/settings'" title="Settings">${name.charAt(0)}</div>
-        </div>
-
-        <div class="dash-layout">
-            <!-- LEFT MAIN CONTENT -->
-            <div class="dash-main">
-                <div style="margin-bottom: 32px; display: flex; align-items: center; gap: 16px;">
-                    <div class="gradient-icon-chip">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>
-                    </div>
-                    <div>
-                        <h1 style="font-family: 'Space Grotesk', sans-serif; font-size:2.2rem; margin-bottom:4px; font-weight:700;">Smart Hashtags</h1>
-                        <p style="color:var(--text-secondary); font-size:1.05rem; margin:0;">AI-powered reach optimization.</p>
-                    </div>
-                </div>
-                ${offlineBanner}
-
-                <div class="card" style="border: 1px solid var(--border-color);">
-                    <div class="form-group">
-                        <label class="form-label" style="font-family:'Space Grotesk', sans-serif;">Post Description</label>
-                        <div class="gen-textarea-wrapper">
-                            <textarea class="gen-textarea" id="hash-desc" placeholder="What is your post about?" maxlength="300">${escapeHtml(state.content)}</textarea>
-                            <div class="gen-textarea-footer">
-                                <span id="hash-char-count" style="font-family:'JetBrains Mono', monospace; font-size:0.75rem; color:var(--text-tertiary);">0/300</span>
-                            </div>
+    renderPageShell(container, {
+        title: 'Smart Hashtags',
+        subtitle: 'AI-powered reach optimization.',
+        iconSvg: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>',
+        renderMain: (mainEl) => {
+            mainEl.innerHTML = `
+                <div class="form-group">
+                    <label class="form-label" style="font-family:'Space Grotesk', sans-serif;">Post Description</label>
+                    <div class="gen-textarea-wrapper">
+                        <textarea class="gen-textarea" id="hash-desc" placeholder="What is your post about?" maxlength="300">${escapeHtml(state.content)}</textarea>
+                        <div class="gen-textarea-footer-left">
+                            ${renderHelperHint('Ctrl + Enter to generate')}
                         </div>
-                    </div>
-                    
-                    <div class="form-group mt-xl">
-                        <label class="form-label" style="font-family:'Space Grotesk', sans-serif;">Content Type</label>
-                        <div class="chip-group-wrap" id="hash-type-chips">
-                            ${typeChips}
+                        <div class="gen-textarea-footer">
+                            <span class="char-count" id="hash-char-count">0/300</span>
                         </div>
-                    </div>
-
-                    <div class="form-group mt-xl">
-                        <label class="form-label" style="font-family:'Space Grotesk', sans-serif;">Niche</label>
-                        <div class="chip-group-wrap" id="hash-niche-chips">
-                            ${nicheChips}
-                        </div>
-                    </div>
-
-                    <div class="mt-xl">
-                        <button class="btn btn-primary" id="hash-gen-btn" style="width:100%; padding: 16px; font-size:1.1rem; border-radius: 12px;">
-                            <span class="btn-text">Generate Tags 🚀</span>
-                        </button>
                     </div>
                 </div>
                 
-                <div id="caption-result-container"></div>
-            </div>
-
-            <!-- RIGHT RAIL (RESULTS) -->
-            <div class="dash-rail">
-                <div class="card" style="padding: 24px;" id="hash-results-panel">
-                    <!-- Default Empty State -->
-                    <div style="text-align: center; padding: 40px 20px; color: var(--text-tertiary);">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 16px; opacity: 0.5;"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>
-                        <p style="font-family:'Space Grotesk', sans-serif; font-size:1.1rem; color:var(--text-secondary); margin-bottom:8px;">Ready to optimize</p>
-                        <p style="font-size:0.85rem;">Your hashtags will appear here,<br>grouped by reach potential.</p>
+                <div class="form-group mt-xl">
+                    <label class="form-label" style="font-family:'Space Grotesk', sans-serif;">Content Type</label>
+                    <div id="hash-type-chips">
+                        ${renderPillGroup(CONTENT_TYPES, state.type)}
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>`;
 
-    document.getElementById('dash-theme-btn')?.addEventListener('click', () => {
-        const newTheme = getTheme() === 'dark' ? 'light' : 'dark';
-        setTheme(newTheme);
-        renderHashtagsPage(container);
-    });
+                <div class="form-group mt-xl">
+                    <label class="form-label" style="font-family:'Space Grotesk', sans-serif;">Niche</label>
+                    <div id="hash-niche-chips">
+                        ${renderPillGroup(NICHES, state.niche)}
+                    </div>
+                </div>
 
-    const descInput = document.getElementById('hash-desc');
-    descInput.oninput = e => { 
-        state.content = e.target.value; 
-        updateCharCount(e.target.value.length);
-        e.target.style.height = 'auto';
-        e.target.style.height = (e.target.scrollHeight) + 'px';
-    };
-    
-    // Initial auto-grow
-    setTimeout(() => {
-        if(descInput.value) {
-            descInput.style.height = 'auto';
-            descInput.style.height = (descInput.scrollHeight) + 'px';
-            updateCharCount(descInput.value.length);
+                <div class="mt-xl">
+                    <button class="btn btn-primary" id="hash-gen-btn" style="width:100%; padding: 16px; font-size:1.1rem; border-radius: 12px;">
+                        <span class="btn-text">Generate Tags 🚀</span>
+                    </button>
+                </div>
+            `;
+            
+            // Render offline banner
+            if (isOffline() && cached) {
+                const offEl = document.getElementById('shell-offline-banner');
+                if(offEl) offEl.innerHTML = `<div class="offline-banner" style="margin-bottom:24px;">📵 Offline — showing cached results</div>`;
+            }
+
+            // Results container
+            const shellRes = document.getElementById('shell-results-container');
+            shellRes.innerHTML = `<div id="caption-result-container"></div>`;
+
+            // Bind Events
+            const descInput = document.getElementById('hash-desc');
+            descInput.oninput = e => { 
+                state.content = e.target.value; 
+                updateCharCount(e.target.value.length);
+                e.target.style.height = 'auto';
+                e.target.style.height = (e.target.scrollHeight) + 'px';
+            };
+            
+            setTimeout(() => {
+                if(descInput.value) {
+                    descInput.style.height = 'auto';
+                    descInput.style.height = (descInput.scrollHeight) + 'px';
+                    updateCharCount(descInput.value.length);
+                }
+            }, 0);
+
+            document.getElementById('hash-type-chips').addEventListener('click', e => handlePillGroupClick(e, state.type, v => state.type = v));
+            document.getElementById('hash-niche-chips').addEventListener('click', e => handlePillGroupClick(e, state.niche, v => state.niche = v));
+
+            document.getElementById('hash-gen-btn').onclick = handleGenerateHashtags;
+            document.addEventListener('keydown', handleKeydown);
+        },
+        renderRail: (railEl) => {
+            railEl.innerHTML = `<div id="hash-results-panel" style="height:100%;"></div>`;
+            
+            if (state.results) renderHashResults();
+            else if (isOffline() && cached) { 
+                state.results = cached.data.groups; 
+                state.caption = cached.data.caption; 
+                renderHashResults(); 
+            } else {
+                document.getElementById('hash-results-panel').innerHTML = renderEmptyState('hashtags');
+            }
         }
-    }, 0);
+    });
+}
 
-    document.getElementById('hash-type-chips').onclick = e => {
-        const c = e.target.closest('.gen-chip'); if (!c) return;
-        state.type = c.dataset.type;
-        container.querySelectorAll('#hash-type-chips .gen-chip').forEach(x => x.classList.remove('selected'));
-        c.classList.add('selected');
-    };
-    document.getElementById('hash-niche-chips').onclick = e => {
-        const c = e.target.closest('.gen-chip'); if (!c) return;
-        state.niche = c.dataset.niche;
-        container.querySelectorAll('#hash-niche-chips .gen-chip').forEach(x => x.classList.remove('selected'));
-        c.classList.add('selected');
-    };
-    document.getElementById('hash-gen-btn').onclick = handleGenerateHashtags;
-
-    if (state.results) renderHashResults();
-    else if (isOffline() && cached) { state.results = cached.data.groups; state.caption = cached.data.caption; renderHashResults(); }
+function handleKeydown(e) {
+    if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault();
+        handleGenerateHashtags();
+    }
 }
 
 function updateCharCount(len) {
@@ -251,16 +149,7 @@ async function handleGenerateHashtags() {
     const btn = document.getElementById('hash-gen-btn');
     btn.classList.add('btn-loading'); btn.disabled = true;
     
-    document.getElementById('hash-results-panel').innerHTML = `
-        <h3 style="font-family:'Space Grotesk', sans-serif; font-size:1.1rem; margin-bottom: 24px;">Analyzing...</h3>
-        <div style="display:flex; flex-direction:column; gap:16px;">
-            ${Array(3).fill('').map(() => `
-            <div>
-                <div class="skeleton skeleton-line" style="width:40%; margin-bottom:12px;"></div>
-                <div class="skeleton skeleton-line"></div>
-                <div class="skeleton skeleton-line" style="width:70%"></div>
-            </div>`).join('')}
-        </div>`;
+    document.getElementById('hash-results-panel').innerHTML = renderLoadingState();
 
     try {
         const voice = getBrandVoice();

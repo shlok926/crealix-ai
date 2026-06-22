@@ -598,6 +598,89 @@ body::after {
   margin-left: 0;
 }
 
+/* ── Shared Page Shell & Dashboard Layouts ── */
+.dash-topbar { 
+  display: flex; justify-content: flex-end; align-items: center; gap: 16px; 
+  margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); 
+}
+.dash-topbar-icon { 
+  background: transparent; border: 1px solid var(--border-color); color: var(--text-primary); 
+  width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; 
+  justify-content: center; cursor: pointer; transition: 0.2s; 
+}
+.dash-topbar-icon:hover { background: var(--bg-secondary); }
+.dash-avatar { 
+  width: 40px; height: 40px; border-radius: 50%; 
+  background: linear-gradient(135deg, var(--accent-purple), var(--primary-color)); 
+  color: #fff; display: flex; align-items: center; justify-content: center; 
+  font-weight: 700; cursor: pointer; 
+}
+
+.dash-layout { display: flex; gap: 32px; align-items: flex-start; }
+.dash-main { flex: 1.8; min-width: 0; }
+.dash-rail { width: 340px; flex-shrink: 0; display: flex; flex-direction: column; gap: 24px; position: sticky; top: 24px; align-self: start; }
+
+@media (max-width: 1024px) {
+    .dash-layout { flex-direction: column; }
+    .dash-rail { width: 100%; position: static; }
+}
+
+.gradient-icon-chip {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.1));
+    color: var(--primary-color);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+}
+
+/* Shared Pills */
+.chip-group-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+.gen-chip { 
+    padding: 8px 16px; border-radius: 999px; background: var(--bg-card); 
+    border: 1px solid var(--border-color); color: var(--text-secondary); 
+    font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s;
+    display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+}
+.gen-chip:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+.gen-chip.selected { 
+    background: rgba(139, 92, 246, 0.15); /* Tinted background */
+    border: 1px solid var(--primary-color); 
+    color: var(--text-primary);
+}
+
+/* Shared Textarea */
+.gen-textarea-wrapper {
+    position: relative; background: var(--bg-input); border: 1px solid var(--border-color);
+    border-radius: 12px; padding: 16px; transition: border-color 0.2s;
+}
+.gen-textarea-wrapper:focus-within { border-color: var(--primary-color); }
+.gen-textarea {
+    width: 100%; min-height: 120px; background: transparent; border: none; outline: none;
+    color: var(--text-primary); font-family: 'Inter', sans-serif; resize: none;
+    line-height: 1.5; font-size: 0.95rem; margin-bottom: 24px; overflow: hidden;
+}
+.gen-textarea-footer {
+    position: absolute; bottom: 12px; right: 16px; display: flex;
+    justify-content: flex-end; align-items: center; pointer-events: none;
+}
+.gen-textarea-footer-left {
+    position: absolute; bottom: 12px; left: 16px; pointer-events: none;
+}
+.hint-pill {
+    font-size: 0.75rem; color: var(--text-tertiary); background: var(--bg-primary); 
+    padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border-color);
+}
+.char-count {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--text-tertiary);
+}
+
+/* Shared Result Item */
+.bio-variant-card, .result-item-card { 
+    background: var(--bg-secondary); border: 1px solid var(--border-color); 
+    border-radius: 12px; padding: 20px; transition: 0.2s; margin-bottom: 16px;
+}
+.bio-variant-card:hover, .result-item-card:hover { border-color: var(--primary-color); }
+
 /* Page-content is the <main> where every page renders into.
    Center everything with max-width + auto margins. */
 #page-content {

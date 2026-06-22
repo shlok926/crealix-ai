@@ -1,6 +1,6 @@
 // ==================== Bio Generator Page ====================
 import { generateBios, generateHashtags, generateEmojis } from '../services/ai.js';
-import { getApiKey, saveBio, incrementUsage, checkUsageLimit, getBrandVoice, getTheme, setTheme } from '../utils/storage.js';
+import { getApiKey, saveBio, incrementUsage, checkUsageLimit, getBrandVoice } from '../utils/storage.js';
 import { copyToClipboard } from '../utils/copy.js';
 import { showToast } from '../components/toast.js';
 import { renderPreview } from '../components/preview.js';
@@ -8,7 +8,10 @@ import { openSettingsModal } from '../components/modal.js';
 import { escapeHtml, escapeAttr, debounce } from '../utils/helpers.js';
 import { addToHistory, getHistory } from '../utils/history.js';
 import { cacheContent, getCachedContent, isOffline } from '../utils/offline.js';
-import { auth } from '../services/firebase.js';
+import { renderPageShell } from '../components/pageShell.js';
+import { renderPillGroup, handlePillGroupClick } from '../components/pillGroup.js';
+import { renderHelperHint } from '../components/helperHint.js';
+import { renderLoadingState } from '../components/resultPanel.js';
 
 const TONES = [
     { id: 'aesthetic', label: 'Aesthetic', color: '#8B5CF6' }, // violet
@@ -48,176 +51,87 @@ const debouncedPreviewUpdate = debounce((bio) => {
 export function renderGenerator(container) {
     const cached = getCachedContent('bios');
     const voice = getBrandVoice();
-    const user = auth.currentUser;
-    const name = user?.displayName ? user.displayName.split(' ')[0] : 'Creator';
-    const isDark = getTheme() === 'dark';
 
     if (!state.description && voice.niche) {
         state.niche = NICHES.find(n => n.label === voice.niche)?.id || 'general';
         state.tone = TONES.find(t => t.label === voice.tone)?.id || 'aesthetic';
     }
 
-    const genStyles = `
-    <style>
-        .dash-topbar { display:flex; justify-content:flex-end; align-items:center; gap:16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
-        .dash-topbar-icon { background:transparent; border:1px solid var(--border-color); color:var(--text-primary); width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:0.2s; }
-        .dash-topbar-icon:hover { background:var(--bg-secondary); }
-        .dash-avatar { width:40px; height:40px; border-radius:50%; background: linear-gradient(135deg, var(--accent-purple), var(--primary-color)); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; cursor:pointer; }
-        
-        .dash-layout { display:flex; gap: 32px; align-items:flex-start; }
-        .dash-main { flex: 1.8; min-width:0; }
-        .dash-rail { width: 340px; flex-shrink:0; display:flex; flex-direction:column; gap:24px; position: sticky; top: 24px; align-self: start; }
-
-        @media (max-width: 1024px) {
-            .dash-layout { flex-direction:column; }
-            .dash-rail { width: 100%; position: static; }
-        }
-
-        /* Pills */
-        .chip-group-wrap { display:flex; flex-wrap:wrap; gap:8px; }
-        .gen-chip { 
-            padding: 8px 16px; border-radius: 999px; background: var(--bg-card); 
-            border: 1px solid var(--border-color); color: var(--text-secondary); 
-            font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s;
-            display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
-        }
-        .gen-chip:hover { background: var(--bg-card-hover); color: var(--text-primary); }
-        .gen-chip.selected { 
-            background: rgba(139, 92, 246, 0.15); /* Tinted background */
-            border: 1px solid var(--primary-color); 
-            color: var(--text-primary);
-        }
-
-        /* Specific formats */
-        .chip-format { border-radius: 8px; }
-        .chip-tone .tone-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-
-        /* Textarea custom */
-        .gen-textarea-wrapper {
-            position: relative; background: var(--bg-input); border: 1px solid var(--border-color);
-            border-radius: 12px; padding: 16px; transition: border-color 0.2s;
-        }
-        .gen-textarea-wrapper:focus-within { border-color: var(--primary-color); }
-        .gen-textarea {
-            width: 100%; min-height: 120px; background: transparent; border: none; outline: none;
-            color: var(--text-primary); font-family: 'Inter', sans-serif; resize: vertical;
-            line-height: 1.5; font-size: 0.95rem; margin-bottom: 24px;
-        }
-        .gen-textarea::-webkit-scrollbar { width: 8px; }
-        .gen-textarea::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
-        .gen-textarea-footer {
-            position: absolute; bottom: 12px; left: 16px; right: 16px; display: flex;
-            justify-content: space-between; align-items: center; pointer-events: none;
-        }
-        
-        .results-grid-cards { display: flex; flex-direction: column; gap: 16px; margin-top: 24px; }
-        .bio-variant-card { 
-            background: var(--bg-secondary); border: 1px solid var(--border-color); 
-            border-radius: 12px; padding: 20px; transition: 0.2s;
-        }
-        .bio-variant-card:hover { border-color: var(--primary-color); }
-        .bio-variant-text { font-family: 'Inter', sans-serif; font-size: 0.95rem; white-space: pre-wrap; line-height: 1.5; color: var(--text-primary); margin-bottom: 16px; }
-    </style>`;
-
-    container.innerHTML = `
-    ${genStyles}
-    <div class="page" style="width:100%; padding: 0 24px;">
-        <!-- TOPBAR -->
-        <div class="dash-topbar" id="dashboard-topbar">
-            <div style="flex:1;"></div>
-            <button class="dash-topbar-icon" id="dash-theme-btn" title="Toggle Theme">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-            </button>
-            <button class="dash-topbar-icon" title="Notifications">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-            </button>
-            <div class="dash-avatar" onclick="window.location.hash='#/settings'" title="Settings">${name.charAt(0)}</div>
-        </div>
-
-        <div class="dash-layout">
-            <!-- LEFT MAIN CONTENT -->
-            <div class="dash-main">
-                <div style="margin-bottom: 32px;">
-                    <h1 style="font-family: 'Space Grotesk', sans-serif; font-size:2.2rem; margin-bottom:8px; font-weight:700;">Bio Generator</h1>
-                    <p style="color:var(--text-secondary); font-size:1.05rem;">Craft optimized, highly-converting Instagram bios using AI.</p>
+    renderPageShell(container, {
+        title: 'Bio Generator',
+        subtitle: 'Craft optimized, highly-converting Instagram bios using AI.',
+        iconSvg: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>',
+        renderMain: (mainEl) => {
+            mainEl.innerHTML = `
+                <div class="form-group">
+                    <label class="form-label" style="font-family:'Space Grotesk', sans-serif;">About You</label>
+                    <div class="gen-textarea-wrapper">
+                        <textarea class="gen-textarea" id="gen-description" placeholder="e.g. I'm a travel photographer who loves coffee and sunsets. Based in Bali.">${escapeHtml(state.description)}</textarea>
+                        <div class="gen-textarea-footer-left">
+                            ${renderHelperHint('Ctrl + Enter to generate')}
+                        </div>
+                        <div class="gen-textarea-footer">
+                            <span class="char-count" id="gen-char-count">0/500</span>
+                        </div>
+                    </div>
                 </div>
-                ${isOffline() && cached ? `<div class="offline-banner" style="margin-bottom:24px;">📵 Offline — showing cached results</div>` : ''}
-
-                <div class="card">
-                    <div class="form-group">
-                        <label class="form-label" style="font-family:'Space Grotesk', sans-serif;">About You</label>
-                        <div class="gen-textarea-wrapper">
-                            <textarea class="gen-textarea" id="gen-description" placeholder="e.g. I'm a travel photographer who loves coffee and sunsets. Based in Bali.">${escapeHtml(state.description)}</textarea>
-                            <div class="gen-textarea-footer">
-                                <span style="font-size:0.75rem; color:var(--text-tertiary); background:var(--bg-primary); padding:2px 6px; border-radius:4px; border:1px solid var(--border-color);">Ctrl + Enter to generate</span>
-                                <span id="gen-char-count" style="font-family:'JetBrains Mono', monospace; font-size:0.75rem; color:var(--text-tertiary);">0/500</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group mt-xl">
-                        <label class="form-label" style="font-family:'Space Grotesk', sans-serif;">Format</label>
-                        <div class="chip-group-wrap" id="format-chips">
-                            ${FORMATS.map(f => `<button class="gen-chip chip-format ${state.format === f.id ? 'selected' : ''}" data-format="${f.id}">${f.label}</button>`).join('')}
-                        </div>
-                    </div>
-
-                    <div class="form-group mt-xl">
-                        <label class="form-label" style="font-family:'Space Grotesk', sans-serif;">Tone / Vibe</label>
-                        <div class="chip-group-wrap" id="tone-chips">
-                            ${TONES.map(t => `<button class="gen-chip chip-tone ${state.tone === t.id ? 'selected' : ''}" data-tone="${t.id}"><span class="tone-dot" style="background:${t.color}"></span> ${t.label}</button>`).join('')}
-                        </div>
-                    </div>
-
-                    <div class="form-group mt-xl">
-                        <label class="form-label" style="font-family:'Space Grotesk', sans-serif;">Niche</label>
-                        <div class="chip-group-wrap" id="niche-chips">
-                            ${NICHES.map(n => `<button class="gen-chip ${state.niche === n.id ? 'selected' : ''}" data-niche="${n.id}">${n.label}</button>`).join('')}
-                        </div>
-                    </div>
-
-                    <div class="mt-xl">
-                        <button class="btn btn-primary" id="generate-btn" style="width:100%; padding: 16px; font-size:1.1rem; border-radius: 12px;">
-                            <span class="btn-text">Generate Bios ✨</span>
-                        </button>
+                
+                <div class="form-group mt-xl">
+                    <label class="form-label" style="font-family:'Space Grotesk', sans-serif;">Format</label>
+                    <div id="format-chips">
+                        ${renderPillGroup(FORMATS, state.format)}
                     </div>
                 </div>
 
+                <div class="form-group mt-xl">
+                    <label class="form-label" style="font-family:'Space Grotesk', sans-serif;">Tone / Vibe</label>
+                    <div id="tone-chips">
+                        ${renderPillGroup(TONES.map(t => ({...t, icon: `<span style="width:8px;height:8px;border-radius:50%;background:${t.color};display:inline-block;"></span>`})), state.tone)}
+                    </div>
+                </div>
+
+                <div class="form-group mt-xl">
+                    <label class="form-label" style="font-family:'Space Grotesk', sans-serif;">Niche</label>
+                    <div id="niche-chips">
+                        ${renderPillGroup(NICHES, state.niche)}
+                    </div>
+                </div>
+
+                <div class="mt-xl">
+                    <button class="btn btn-primary" id="generate-btn" style="width:100%; padding: 16px; font-size:1.1rem; border-radius: 12px;">
+                        <span class="btn-text">Generate Bios ✨</span>
+                    </button>
+                </div>
+            `;
+            // Re-mount results below main form card
+            const shellRes = document.getElementById('shell-results-container');
+            shellRes.innerHTML = `
                 <div id="results-container"></div>
                 <div style="display:flex; gap:24px; margin-top:32px; flex-wrap:wrap; margin-bottom: 40px;">
                     <div id="hashtags-container" style="flex:1; min-width:300px;"></div>
                     <div id="emojis-container" style="flex:1; min-width:300px;"></div>
                 </div>
-            </div>
-
-            <!-- RIGHT RAIL -->
-            <div class="dash-rail">
+            `;
+            bindEvents(container);
+            updateCharCount(state.description.length);
+        },
+        renderRail: (railEl) => {
+            railEl.innerHTML = `
                 <div id="preview-container"></div>
-                
                 <div class="card" style="padding: 24px;">
-                    <h3 style="font-family:'Space Grotesk', sans-serif; font-size:1.1rem; margin-bottom: 16px; display:flex; align-items:center; gap:8px;">
-                        💡 Pro Tips
-                    </h3>
+                    <h3 style="font-family:'Space Grotesk', sans-serif; font-size:1.1rem; margin-bottom: 16px; display:flex; align-items:center; gap:8px;">💡 Pro Tips</h3>
                     <ul style="color:var(--text-secondary); font-size:0.85rem; padding-left:16px; display:flex; flex-direction:column; gap:12px; margin:0;">
                         <li><strong>Be specific:</strong> Instead of "I like food", try "Vegan baker obsessed with sourdough."</li>
                         <li><strong>Call to Action:</strong> Always choose the "With CTA" format if you want users to click your link.</li>
-                        <li><strong>Vibe matching:</strong> Match your Tone to your target audience (Gen-Z for younger demographics).</li>
+                        <li><strong>Vibe matching:</strong> Match your Tone to your target audience.</li>
                     </ul>
                 </div>
-
                 <div id="history-container"></div>
-            </div>
-        </div>
-    </div>`;
-
-    document.getElementById('dash-theme-btn')?.addEventListener('click', () => {
-        const newTheme = getTheme() === 'dark' ? 'light' : 'dark';
-        setTheme(newTheme);
-        renderGenerator(container); // Re-render to update UI
+            `;
+            renderPreview(document.getElementById('preview-container'), { bio: state.selectedBio });
+            renderHistory();
+        }
     });
-
-    renderPreview(document.getElementById('preview-container'), { bio: state.selectedBio });
-    bindEvents(container);
 
     if (state.bios.length > 0) {
         renderResults();
@@ -228,9 +142,6 @@ export function renderGenerator(container) {
         state.selectedBio = state.bios[0] || '';
         if (state.bios.length) { renderResults(); renderPreview(document.getElementById('preview-container'), { bio: state.selectedBio }); }
     }
-
-    renderHistory();
-    updateCharCount(state.description.length);
 }
 
 function bindEvents(container) {
@@ -242,24 +153,9 @@ function bindEvents(container) {
         debouncedPreviewUpdate(state.selectedBio);
     });
 
-    document.getElementById('format-chips').addEventListener('click', e => {
-        const c = e.target.closest('.gen-chip'); if (!c) return;
-        state.format = c.dataset.format;
-        container.querySelectorAll('#format-chips .gen-chip').forEach(x => x.classList.remove('selected'));
-        c.classList.add('selected');
-    });
-    document.getElementById('tone-chips').addEventListener('click', e => {
-        const c = e.target.closest('.gen-chip'); if (!c) return;
-        state.tone = c.dataset.tone;
-        container.querySelectorAll('#tone-chips .gen-chip').forEach(x => x.classList.remove('selected'));
-        c.classList.add('selected');
-    });
-    document.getElementById('niche-chips').addEventListener('click', e => {
-        const c = e.target.closest('.gen-chip'); if (!c) return;
-        state.niche = c.dataset.niche;
-        container.querySelectorAll('#niche-chips .gen-chip').forEach(x => x.classList.remove('selected'));
-        c.classList.add('selected');
-    });
+    document.getElementById('format-chips').addEventListener('click', e => handlePillGroupClick(e, state.format, v => state.format = v));
+    document.getElementById('tone-chips').addEventListener('click', e => handlePillGroupClick(e, state.tone, v => state.tone = v));
+    document.getElementById('niche-chips').addEventListener('click', e => handlePillGroupClick(e, state.niche, v => state.niche = v));
 
     document.getElementById('generate-btn').addEventListener('click', handleGenerate);
     document.addEventListener('keydown', handleKeydown);
@@ -289,15 +185,7 @@ async function handleGenerate() {
     btn.disabled = true;
     state.loading = true;
 
-    document.getElementById('results-container').innerHTML = `
-    <div class="results-grid-cards">
-        ${[1,2,3].map(() => `
-        <div class="bio-variant-card">
-            <div class="skeleton skeleton-line"></div>
-            <div class="skeleton skeleton-line"></div>
-            <div class="skeleton skeleton-line" style="width:60%"></div>
-        </div>`).join('')}
-    </div>`;
+    document.getElementById('results-container').innerHTML = renderLoadingState();
 
     try {
         const voice = getBrandVoice();
