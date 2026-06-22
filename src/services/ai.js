@@ -1,7 +1,7 @@
 // ==================== OpenRouter AI Service ====================
 import { getApiKey } from '../utils/storage.js';
 
-const MODEL = 'google/gemma-2-9b-it:free';
+const MODEL = 'openrouter/free';
 
 // ── Core fetch wrapper ─────────────────────────────────────────
 async function callAI(systemPrompt, userPrompt) {

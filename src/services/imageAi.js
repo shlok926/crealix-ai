@@ -47,7 +47,7 @@ async function callAIGeneric(systemPrompt, userPrompt) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            model: 'google/gemma-2-9b-it:free',
+            model: 'openrouter/free',
             messages: [
                 { role: 'system', content: systemPrompt },
                 { role: 'user', content: userPrompt }
