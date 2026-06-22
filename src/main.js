@@ -77,10 +77,21 @@ async function navigate() {
 
     // Layout Management: Toggle full-page class for home/login
     const appContainer = document.querySelector('.app-container');
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.getElementById('hamburger-btn');
+    
     if (route === '/login' || route === '/') {
         appContainer?.classList.add('is-full-page');
     } else {
         appContainer?.classList.remove('is-full-page');
+        // Restore layout styles that login/home page might have overridden
+        if (sidebar) sidebar.style.display = '';
+        if (toggleBtn) toggleBtn.style.display = '';
+        if (pageContent) {
+            pageContent.style.marginLeft = '';
+            pageContent.style.width = '';
+            pageContent.style.maxWidth = '';
+        }
     }
 
     // 🔒 Feature gate: block locked routes and show upgrade modal
