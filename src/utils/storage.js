@@ -211,6 +211,36 @@ export function setBrandVoice(data) {
 // ── Usage Tracking ────────────────────────────────────────────
 function today() { return new Date().toISOString().split('T')[0]; }
 
+export function setSidebarCollapsed(collapsed) {
+    if (collapsed) {
+        localStorage.setItem(KEYS.SIDEBAR_COLLAPSED, 'true');
+    } else {
+        localStorage.removeItem(KEYS.SIDEBAR_COLLAPSED);
+    }
+}
+
+// ── Data Export (JSON) ───────────────────────────────────────
+export function exportAllUserData() {
+    const data = {
+        bios: getSavedBios(),
+        usernames: getSavedUsernames(),
+        hashtags: getSavedHashtags(),
+        captions: getSavedCaptions(),
+        templates: getSavedTemplates(),
+        scripts: getSavedScripts(),
+        stories: getSavedStories(),
+        brandVoice: getBrandVoice(),
+        usage: getDailyUsage()
+    };
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "crealix_account_data.json");
+    document.body.appendChild(downloadAnchorNode); // required for firefox
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+}
+
 export function getDailyUsage() {
     try {
         const raw = localStorage.getItem(KEYS.USAGE);

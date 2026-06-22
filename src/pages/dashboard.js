@@ -1,6 +1,7 @@
 // ==================== Dashboard Page ====================
 import { getDailyUsage, getSavedBios, getSavedUsernames, getSavedHashtags, getSavedCaptions, getSavedTemplates, getSavedScripts, getSavedStories } from '../utils/storage.js';
 import { showToast } from '../components/toast.js';
+import { startTour } from '../utils/tour.js';
 
 export async function renderDashboard(container) {
     const usage = getDailyUsage();
@@ -116,4 +117,11 @@ export async function renderDashboard(container) {
             </div>
         </div>
     </div>`;
+
+    setTimeout(() => {
+        if (!localStorage.getItem('crealix_has_seen_tour')) {
+            localStorage.setItem('crealix_has_seen_tour', 'true');
+            startTour();
+        }
+    }, 500);
 }
