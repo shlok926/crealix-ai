@@ -96,12 +96,12 @@ Do NOT output any explanations, conversational text, or quotes. Only the 3 bios.
 }
 
 // ── Username Generation ────────────────────────────────────────
-export async function generateUsernames(keywords, style) {
+export async function generateUsernames(keywords, style, count = 10) {
     const raw = await callAI(
-        'Generate exactly 10 Instagram username suggestions. Each on separate line numbered 1-10. Only letters, numbers, underscores, periods. 3-30 chars. No @ symbol. No explanation.',
-        `Create 10 Instagram usernames for: "${keywords}"\nStyle: ${style}`
+        `Generate exactly ${count} Instagram username suggestions. Each on separate line numbered 1-${count}. Only letters, numbers, underscores, periods. 3-30 chars. No @ symbol. No explanation.`,
+        `Create ${count} Instagram usernames for: "${keywords}"\nStyle: ${style}`
     );
-    return parseUsernames(raw);
+    return parseUsernames(raw, count);
 }
 
 // ── Hashtag Generation ─────────────────────────────────────────
@@ -388,13 +388,13 @@ function parseBios(raw) {
     return bios.length > 0 ? bios.slice(0, 3) : [raw.trim()];
 }
 
-function parseUsernames(raw) {
+function parseUsernames(raw, maxCount = 10) {
     const lines = raw.split('\n').filter(l => l.trim());
     const unames = [];
     for (const line of lines) {
         const cleaned = line.replace(/^\d+[\.\)\-]\s*/, '').replace(/@/g, '').trim();
         if (cleaned && /^[a-zA-Z0-9_.]+$/.test(cleaned)) unames.push(cleaned);
-        if (unames.length >= 10) break;
+        if (unames.length >= maxCount) break;
     }
     return unames;
 }
