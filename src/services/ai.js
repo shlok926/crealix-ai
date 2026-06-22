@@ -41,7 +41,7 @@ export async function analyzeImage(base64Image, userPrompt) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            model: 'google/gemini-flash-1.5', // Highly efficient for vision
+            model: 'google/gemini-1.5-flash', // Highly efficient for vision
             messages: [
                 {
                     role: 'user',

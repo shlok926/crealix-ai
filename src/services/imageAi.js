@@ -17,12 +17,9 @@ export async function generateAiImage(prompt, aspectRatio = '1:1') {
         },
         body: JSON.stringify({
             model: IMAGE_MODEL,
-            prompt: `${prompt}, high quality, instagram aesthetic, 4k, professional photography, ${aspectRatio} aspect ratio`,
-            // Some providers use 'messages' for image generation too
             messages: [
-                { role: 'user', content: `Generate an image of: ${prompt}. Aspect ratio: ${aspectRatio}. Instagram style.` }
-            ],
-            response_format: { type: 'url' } // Standard for image APIs
+                { role: 'user', content: `Generate an image of: ${prompt}, high quality, instagram aesthetic, 4k, professional photography, ${aspectRatio} aspect ratio` }
+            ]
         })
     });
 
