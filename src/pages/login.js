@@ -51,6 +51,10 @@ export function renderLoginPage(container) {
                 <a href="#/" class="btn btn-secondary login-btn-guest" id="login-guest-btn" style="text-decoration:none; display:flex; align-items:center; justify-content:center;">
                     Return to Home Page <span>→</span>
                 </a>
+
+                <div style="text-align:center; margin-top:24px;">
+                    <button type="button" id="primary-signup-btn" style="background:none;border:none;color:var(--text-secondary); font-size:14px; text-decoration:none; cursor:pointer; font-family: inherit;">Don't have an account? <span style="color:var(--primary-color); font-weight:600;">Sign Up</span></button>
+                </div>
             </div>
 
             <!-- Hidden Phone Input Form -->
@@ -179,6 +183,33 @@ export function renderLoginPage(container) {
     document.getElementById('login-email-btn')?.addEventListener('click', () => {
         document.getElementById('login-primary-options').style.display = 'none';
         document.getElementById('login-email-form').style.display = 'block';
+        
+        // Force to Sign In mode
+        isEmailSignUp = false;
+        document.getElementById('email-submit-btn').textContent = 'Sign In';
+        document.getElementById('password-input').autocomplete = 'current-password';
+        document.getElementById('confirm-password-group').style.display = 'none';
+        const confirmInput = document.getElementById('confirm-password-input');
+        if (confirmInput) confirmInput.required = false;
+        
+        const toggleBtn = document.getElementById('toggle-email-mode');
+        if(toggleBtn) toggleBtn.innerHTML = 'Don\\'t have an account? <span style="color:var(--primary-color)">Sign Up</span>';
+    });
+
+    document.getElementById('primary-signup-btn')?.addEventListener('click', () => {
+        document.getElementById('login-primary-options').style.display = 'none';
+        document.getElementById('login-email-form').style.display = 'block';
+        
+        // Force to Sign Up mode
+        isEmailSignUp = true;
+        document.getElementById('email-submit-btn').textContent = 'Create Account';
+        document.getElementById('password-input').autocomplete = 'new-password';
+        document.getElementById('confirm-password-group').style.display = 'block';
+        const confirmInput = document.getElementById('confirm-password-input');
+        if (confirmInput) confirmInput.required = true;
+        
+        const toggleBtn = document.getElementById('toggle-email-mode');
+        if(toggleBtn) toggleBtn.innerHTML = 'Already have an account? <span style="color:var(--primary-color)">Sign In</span>';
     });
 
     document.getElementById('back-from-email')?.addEventListener('click', () => {
