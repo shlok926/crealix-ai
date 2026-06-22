@@ -24,6 +24,8 @@ export async function renderDashboard(container) {
     if (hour < 12) greeting = 'Good Morning';
     else if (hour < 18) greeting = 'Good Afternoon';
 
+    const usagePct = Math.min((usage.count / 50) * 100, 100);
+
     // CSS specifically for dashboard
     const dashStyle = `
     <style>
