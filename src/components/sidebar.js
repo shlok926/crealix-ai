@@ -8,6 +8,33 @@ import { getCachedPlan } from '../services/userPlan.js';
 
 const provider = new GoogleAuthProvider();
 
+let isResizing = false;
+if (!window.__sidebarResizeAttached) {
+    window.__sidebarResizeAttached = true;
+    document.addEventListener('mousemove', (e) => {
+        if (!isResizing) return;
+        let newWidth = e.clientX;
+        if (newWidth < 200) newWidth = 200;
+        if (newWidth > 600) newWidth = 600;
+        document.documentElement.style.setProperty('--sidebar-width', `${newWidth}px`);
+    });
+    document.addEventListener('mouseup', () => {
+        if (isResizing) {
+            isResizing = false;
+            document.body.style.cursor = '';
+            document.body.style.userSelect = '';
+            const width = document.documentElement.style.getPropertyValue('--sidebar-width');
+            if (width) localStorage.setItem('crealix_sidebar_width', width);
+        }
+    });
+
+    // Initialize width from localStorage
+    const savedWidth = localStorage.getItem('crealix_sidebar_width');
+    if (savedWidth) {
+        document.documentElement.style.setProperty('--sidebar-width', savedWidth);
+    }
+}
+
 // ── Auth actions ─────────────────────────────────────────────
 export async function loginWithGoogle() {
     try {
@@ -161,6 +188,7 @@ export function renderSidebar(route, currentUser = null, currentPlan = 'free') {
             }).join('')}
         </nav>
         <div class="sidebar-footer">${userSection}</div>
+        <div class="sidebar-resizer" id="sidebar-resizer"></div>
     `;
 
     // Mobile toggle
@@ -177,9 +205,14 @@ export function renderSidebar(route, currentUser = null, currentPlan = 'free') {
             sidebar.classList.remove('open'); overlay?.classList.remove('active');
         });
     });
-
-
-
+    const resizer = document.getElementById('sidebar-resizer');
+    if (resizer) {
+        resizer.addEventListener('mousedown', () => {
+            isResizing = true;
+            document.body.style.cursor = 'ew-resize';
+            document.body.style.userSelect = 'none';
+        });
+    }
     // Theme toggle
     document.getElementById('sidebar-theme-btn')?.addEventListener('click', () => {
         const newTheme = getTheme() === 'dark' ? 'light' : 'dark';

@@ -349,6 +349,24 @@ body::after {
   transition: transform var(--transition-base);
   overflow-x: hidden;
 }
+
+.sidebar-resizer {
+  position: absolute;
+  top: 0;
+  right: -3px;
+  width: 6px;
+  height: 100%;
+  cursor: ew-resize;
+  background: transparent;
+  z-index: 910;
+  transition: background 0.2s;
+}
+
+.sidebar-resizer:hover,
+.sidebar-resizer:active {
+  background: var(--primary-color, var(--accent-purple));
+  opacity: 0.5;
+}
 .is-full-page .sidebar {
   display: none;
 }
