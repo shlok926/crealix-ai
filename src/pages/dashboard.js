@@ -1,7 +1,8 @@
 // ==================== Dashboard Page ====================
-import { getDailyUsage, getSavedBios, getSavedUsernames, getSavedHashtags, getSavedCaptions, getSavedTemplates, getSavedScripts, getSavedStories } from '../utils/storage.js';
+import { getDailyUsage, getSavedBios, getSavedUsernames, getSavedHashtags, getSavedCaptions, getSavedTemplates, getSavedScripts, getSavedStories, getTheme, setTheme } from '../utils/storage.js';
 import { showToast } from '../components/toast.js';
 import { startTour } from '../utils/tour.js';
+import { auth } from '../services/firebase.js';
 
 export async function renderDashboard(container) {
     const usage = getDailyUsage();
@@ -14,109 +15,185 @@ export async function renderDashboard(container) {
     const stories = getSavedStories().length;
     const totalSaved = bios + usernames + hashtags + captions + templates + scripts + stories;
 
-    const hasAnyActivity = totalSaved > 0 || usage.count > 0;
-    const usagePct = Math.min((usage.count / 5) * 100, 100);
+    const user = auth.currentUser;
+    const name = user?.displayName ? user.displayName.split(' ')[0] : 'Creator';
+    const isDark = getTheme() === 'dark';
 
-    const emptyState = `
-    <div class="empty-state" style="margin-top:var(--space-2xl)">
-        <div class="empty-state-icon">📊</div>
-        <h3 class="empty-state-title">No Stats Yet</h3>
-        <p class="empty-state-desc">Generate some bios, captions or hashtags to see your usage stats here!</p>
-        <a href="#/generator" class="btn btn-primary mt-lg">✨ Generate Your First Bio</a>
-    </div>`;
+    const hour = new Date().getHours();
+    let greeting = 'Good Evening';
+    if (hour < 12) greeting = 'Good Morning';
+    else if (hour < 18) greeting = 'Good Afternoon';
+
+    // CSS specifically for dashboard
+    const dashStyle = `
+    <style>
+        .dash-topbar { display:flex; justify-content:flex-end; align-items:center; gap:16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .dash-topbar-icon { background:transparent; border:1px solid var(--border-color); color:var(--text-primary); width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:0.2s; }
+        .dash-topbar-icon:hover { background:var(--bg-secondary); }
+        .dash-avatar { width:40px; height:40px; border-radius:50%; background: linear-gradient(135deg, var(--accent-purple), var(--primary-color)); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; cursor:pointer; }
+        
+        .dash-layout { display:flex; gap: 32px; align-items:flex-start; }
+        .dash-main { flex:1; min-width:0; }
+        .dash-rail { width: 320px; flex-shrink:0; display:flex; flex-direction:column; gap:24px; }
+
+        @media (max-width: 1024px) {
+            .dash-layout { flex-direction:column; }
+            .dash-rail { width: 100%; }
+        }
+
+        .stat-cards-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+        .stat-card { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 16px; padding: 24px; position:relative; overflow:hidden; }
+        .stat-card-title { font-size: 0.85rem; color: var(--text-secondary); text-transform:uppercase; letter-spacing:0.5px; font-weight:600; margin-bottom:12px; }
+        .stat-card-value { font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight:700; color: var(--text-primary); line-height:1; margin-bottom:8px; }
+        .stat-card-desc { font-size: 0.85rem; color: var(--text-tertiary); margin-bottom:16px; }
+        
+        .ws-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+        .ws-card { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; display:flex; align-items:flex-start; gap:16px; text-decoration:none; transition:0.2s; position:relative; }
+        .ws-card:hover { border-color: var(--primary-color); transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .ws-icon { width: 40px; height: 40px; border-radius: 10px; background: rgba(139, 92, 246, 0.1); color: var(--primary-color); display:flex; align-items:center; justify-content:center; }
+        .ws-title { font-weight:600; color: var(--text-primary); margin-bottom:4px; font-family: 'Space Grotesk', sans-serif; }
+        .ws-desc { font-size:0.8rem; color: var(--text-secondary); line-height:1.4; }
+        .ws-arrow { position:absolute; right:16px; top:50%; transform:translateY(-50%); opacity:0; transition:0.2s; color:var(--primary-color); }
+        .ws-card:hover .ws-arrow { opacity:1; transform:translateY(-50%) translateX(4px); }
+
+        .radial-ring { position:relative; width:160px; height:160px; border-radius:50%; background: conic-gradient(var(--primary-color) ${usagePct}%, var(--border-color) 0); display:flex; align-items:center; justify-content:center; margin: 0 auto; }
+        .radial-ring-inner { width:130px; height:130px; border-radius:50%; background: var(--bg-secondary); display:flex; flex-direction:column; align-items:center; justify-content:center; }
+        .radial-val { font-family: 'JetBrains Mono', monospace; font-size:1.8rem; font-weight:700; color:var(--text-primary); }
+        .radial-label { font-size:0.75rem; color:var(--text-secondary); text-transform:uppercase; }
+    </style>`;
 
     container.innerHTML = `
-    <div class="page page-narrow">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: var(--space-xs);">
-            <h1 class="section-title" style="margin-bottom:0; display:flex; align-items:center; gap: 10px; font-size: 1.8rem;">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                Creator Studio
-            </h1>
-            <a href="#/" class="btn btn-secondary" style="display:flex; align-items:center; gap: 8px; text-decoration:none; padding: 6px 12px; font-size: 0.85rem; background: transparent; border: 1px solid var(--border-color);">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-                Return to Main Site
-            </a>
-        </div>
-        <p class="section-subtitle" style="margin-bottom: var(--space-xl);">Welcome back. Here is an overview of your workspace and assets.</p>
+    ${dashStyle}
+    <div class="page" style="max-width:1400px; margin: 0 auto; padding: 0 24px;">
         
-        <div class="dashboard-grid">
-            <div class="card dashboard-card">
-                <div class="dashboard-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                </div>
-                <div class="dashboard-val">${usage.count}/∞</div>
-                <div class="dashboard-label">Daily API Requests</div>
-                <div class="usage-bar-container">
-                    <div class="usage-bar" style="width:100%"></div>
-                </div>
-            </div>
-            <div class="card dashboard-card">
-                <div class="dashboard-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                </div>
-                <div class="dashboard-val">${totalSaved}</div>
-                <div class="dashboard-label">Assets in Library</div>
-            </div>
-            <div class="card dashboard-card">
-                <div class="dashboard-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-                </div>
-                <div class="dashboard-val">Free Tier</div>
-                <div class="dashboard-label">Current Plan</div>
-            </div>
+        <!-- TOPBAR -->
+        <div class="dash-topbar" id="dashboard-topbar">
+            <div style="flex:1;"></div>
+            <button class="dash-topbar-icon" id="dash-theme-btn" title="Toggle Theme">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+            <button class="dash-topbar-icon" title="Notifications">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            </button>
+            <div class="dash-avatar" onclick="window.location.hash='#/settings'" title="Settings">${name.charAt(0)}</div>
         </div>
 
-        <h3 class="feature-title mt-xl" style="margin-bottom:var(--space-lg); display:flex; align-items:center; gap:8px;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-            Workspace Apps
-        </h3>
-        <div class="creator-quick-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-md); margin-bottom: var(--space-xl);">
-            ${[
-                { icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`, label: 'AI Image Studio', href: '#/image-gen', desc: 'Flux.1 Art Studio' },
-                { icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`, label: 'AI Vision Studio', href: '#/vision', desc: 'Image to Caption' },
-                { icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`, label: 'Bio Generator', href: '#/generator', desc: 'Create stunning bios' },
-                { icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>`, label: 'Smart Hashtags', href: '#/smart-hashtags', desc: 'Trending tags' },
-                { icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`, label: 'Caption Studio', href: '#/captions', desc: 'Write viral captions' },
-                { icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>`, label: 'Hook Generator', href: '#/hooks', desc: 'Stop the scroll' },
-                { icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`, label: 'Profile Audit', href: '#/audit', desc: 'Deep Strategy Scan' },
-                { icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>`, label: 'Reel Script', href: '#/reel-script', desc: 'Viral scripts' }
-            ].map(a => `
-            <a href="${a.href}" class="creator-quick-card card" style="text-decoration:none; display:flex; align-items:center; gap:var(--space-md); padding:var(--space-md); transition: transform 0.2s;">
-                <div style="color:var(--text-accent); display:flex; align-items:center; justify-content:center">${a.icon}</div>
-                <div>
-                    <div style="font-weight:600; color:var(--text-primary)">${a.label}</div>
-                    <div style="font-size:0.75rem; color:var(--text-secondary)">${a.desc}</div>
+        <div class="dash-layout">
+            <!-- LEFT MAIN CONTENT -->
+            <div class="dash-main">
+                <div style="margin-bottom: 32px;">
+                    <h1 style="font-family: 'Space Grotesk', sans-serif; font-size:2.2rem; margin-bottom:8px; font-weight:700;">${greeting}, ${name}! 👋</h1>
+                    <p style="color:var(--text-secondary); font-size:1.05rem;">Ready to create some magic today?</p>
                 </div>
-            </a>`).join('')}
-        </div>
 
-        <div class="card mt-xl" style="padding: var(--space-xl);">
-            <h3 class="feature-title" style="margin-bottom:var(--space-lg); display:flex; align-items:center; gap:8px;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Asset Library Storage
-            </h3>
-            <div style="display:flex;flex-direction:column;gap:var(--space-md)">
-                ${[
-                    { label: 'Bios Generated', count: bios, href: '#/saved' },
-                    { label: 'Username Ideas', count: usernames, href: '#/saved' },
-                    { label: 'Hashtag Collections', count: hashtags, href: '#/saved' },
-                    { label: 'Post Captions', count: captions, href: '#/saved' },
-                    { label: 'Custom Templates', count: templates, href: '#/templates' },
-                    { label: 'Reel Scripts', count: scripts, href: '#/saved' },
-                    { label: 'Story Concepts', count: stories, href: '#/saved' }
-                ].map(item => `
-                <div style="display:flex;align-items:center;justify-content:space-between; padding: 8px 0; border-bottom: 1px solid var(--border-color);">
-                    <span style="color:var(--text-secondary);font-size:0.9rem; font-weight:500;">${item.label}</span>
-                    <div style="display:flex;align-items:center;gap:var(--space-md)">
-                        <span style="font-weight:600;color:var(--text-primary); font-family: monospace;">${item.count.toString().padStart(2, '0')}</span>
-                        <div class="stat-bar-container" style="width:120px; height: 6px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden;">
-                            <div style="height:100%; width:${Math.min(item.count * 10, 100)}%; background: var(--primary-color); border-radius: 4px; transition: width 0.5s ease;"></div>
+                <!-- STAT CARDS -->
+                <div class="stat-cards-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-title">API Requests</div>
+                        <div class="stat-card-value" style="font-family:'JetBrains Mono', monospace;">${usage.count}</div>
+                        <div class="stat-card-desc">Used today (Unlimited plan active)</div>
+                        <span style="display:inline-block; padding:4px 8px; background:rgba(16, 185, 129, 0.1); color:#10b981; border-radius:4px; font-size:0.75rem; font-weight:600;">Unlimited ⚡</span>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-title">Library Assets</div>
+                        <div class="stat-card-value" style="font-family:'JetBrains Mono', monospace;">${totalSaved}</div>
+                        <div class="stat-card-desc">Saved items across all tools</div>
+                        <a href="#/saved" class="btn btn-secondary" style="font-size:0.8rem; padding:6px 12px; display:inline-block;">Open Library &rarr;</a>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(37,99,235,0.05)); border-color: rgba(139,92,246,0.2);">
+                        <div class="stat-card-title" style="color:var(--primary-color)">Current Plan</div>
+                        <div class="stat-card-value">Free Tier</div>
+                        <div class="stat-card-desc">Basic features unlocked</div>
+                        <button class="btn btn-primary" style="font-size:0.8rem; padding:6px 12px; width:100%;">Upgrade to Pro ✨</button>
+                    </div>
+                </div>
+
+                <!-- WORKSPACE APPS -->
+                <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:20px;">
+                    <h2 style="font-family:'Space Grotesk', sans-serif; font-size:1.4rem;">Workspace Apps</h2>
+                    <div style="display:flex; gap:12px; border-bottom: 1px solid var(--border-color); padding-bottom:8px;">
+                        <span style="font-size:0.85rem; color:var(--text-primary); font-weight:600; cursor:pointer;">All Tools</span>
+                        <span style="font-size:0.85rem; color:var(--text-tertiary); cursor:pointer;">Generate</span>
+                        <span style="font-size:0.85rem; color:var(--text-tertiary); cursor:pointer;">Grow</span>
+                    </div>
+                </div>
+                
+                <div class="ws-grid">
+                    ${[
+                        { icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`, label: 'Bio Generator', href: '#/generator', desc: 'Craft optimized, highly-converting Instagram bios.' },
+                        { icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>`, label: 'Smart Hashtags', href: '#/smart-hashtags', desc: 'Find trending tags to boost your reach.' },
+                        { icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`, label: 'Caption Studio', href: '#/captions', desc: 'Write viral, engaging captions instantly.' },
+                        { icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`, label: 'AI Image Studio', href: '#/image-gen', desc: 'Generate breathtaking visuals with Flux.' },
+                        { icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`, label: 'Vision Studio', href: '#/vision', desc: 'Upload images to extract context & captions.' },
+                        { icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>`, label: 'Hook Generator', href: '#/hooks', desc: 'Write first lines that stop the scroll.' },
+                        { icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>`, label: 'Reel Script', href: '#/reel-script', desc: 'Structured viral short-form video scripts.' }
+                    ].map(a => `
+                    <a href="${a.href}" class="ws-card">
+                        <div class="ws-icon">${a.icon}</div>
+                        <div>
+                            <div class="ws-title">${a.label}</div>
+                            <div class="ws-desc">${a.desc}</div>
+                        </div>
+                        <div class="ws-arrow">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                        </div>
+                    </a>`).join('')}
+                </div>
+            </div>
+
+            <!-- RIGHT RAIL -->
+            <div class="dash-rail">
+                <!-- Usage Ring -->
+                <div class="card" style="padding: 32px 24px; text-align:center;">
+                    <h3 style="font-family:'Space Grotesk', sans-serif; font-size:1.1rem; margin-bottom: 24px;">Daily Health</h3>
+                    <div class="radial-ring">
+                        <div class="radial-ring-inner">
+                            <div class="radial-val">${usage.count}</div>
+                            <div class="radial-label">Reqs</div>
                         </div>
                     </div>
-                </div>`).join('')}
+                    <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:24px;">Your usage is completely unlimited on the current tier. Keep creating!</p>
+                </div>
+
+                <!-- Recent Activity Placeholder -->
+                <div class="card" style="padding: 24px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+                        <h3 style="font-family:'Space Grotesk', sans-serif; font-size:1.1rem;">Recent Activity</h3>
+                        <a href="#/saved" style="font-size:0.8rem; color:var(--primary-color); text-decoration:none;">View all</a>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:16px;">
+                        <div style="display:flex; gap:12px; align-items:flex-start;">
+                            <div style="width:8px; height:8px; border-radius:50%; background:var(--primary-color); margin-top:6px;"></div>
+                            <div>
+                                <div style="font-size:0.9rem; color:var(--text-primary);">Generated a new Bio</div>
+                                <div style="font-size:0.75rem; color:var(--text-tertiary);">Just now</div>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:12px; align-items:flex-start;">
+                            <div style="width:8px; height:8px; border-radius:50%; background:var(--border-color); margin-top:6px;"></div>
+                            <div>
+                                <div style="font-size:0.9rem; color:var(--text-primary);">Saved a Reel Script</div>
+                                <div style="font-size:0.75rem; color:var(--text-tertiary);">2 hours ago</div>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:12px; align-items:flex-start;">
+                            <div style="width:8px; height:8px; border-radius:50%; background:var(--border-color); margin-top:6px;"></div>
+                            <div>
+                                <div style="font-size:0.9rem; color:var(--text-primary);">Account Created</div>
+                                <div style="font-size:0.75rem; color:var(--text-tertiary);">Welcome to Crealix!</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>`;
+
+    document.getElementById('dash-theme-btn')?.addEventListener('click', () => {
+        const newTheme = getTheme() === 'dark' ? 'light' : 'dark';
+        setTheme(newTheme);
+        renderDashboard(container); // Re-render to update UI
+    });
 
     setTimeout(() => {
         if (!localStorage.getItem('crealix_has_seen_tour')) {
