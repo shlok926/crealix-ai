@@ -181,24 +181,19 @@ export async function generateDeepProfileAudit(username, bio, niche, goal, follo
         Format your response EXACTLY as:
         [SCORE] 0-100
         [METRICS] Clarity:0-10, Appeal:0-10, CTA:0-10, SEO:0-10
-        [STRENGTHS]
-        - strength 1
-        - strength 2
-        [WEAKNESSES]
-        - weakness 1
-        - weakness 2
-        [STRATEGY]
-        A brief 2-3 sentence overview of the current brand positioning.
-        [SUGGESTIONS]
-        - actionable suggestion 1
-        - actionable suggestion 2
-        [ROADMAP]
-        - Week 1: task
-        - Week 2: task
-        - Week 3: task
-        - Week 4: task
+        [BIO_FEEDBACK]
+        A specific critique of the pasted bio (what's working, what's missing like hook, CTA, keyword presence).
         [REWRITTEN]
-        A rewritten bio under 150 chars`,
+        A rewritten bio under 150 chars.
+        [CONTENT_PLAN]
+        - Day 1-7: [Idea]
+        - Day 8-14: [Idea]
+        - Day 15-21: [Idea]
+        - Day 22-30: [Idea]
+        [QUICK_WINS]
+        - [Win 1]
+        - [Win 2]
+        - [Win 3]`,
         `Audit this Instagram profile:
         Username: @${username}
         Bio: "${bio}"
@@ -229,12 +224,10 @@ function parseDeepAudit(raw) {
     return {
         score: parseInt(get('SCORE')) || 50,
         metrics,
-        strengths: parseList('STRENGTHS'),
-        weaknesses: parseList('WEAKNESSES'),
-        strategy: get('STRATEGY'),
-        suggestions: parseList('SUGGESTIONS'),
-        roadmap: parseList('ROADMAP'),
-        rewritten: get('REWRITTEN')
+        bioFeedback: get('BIO_FEEDBACK'),
+        rewritten: get('REWRITTEN'),
+        contentPlan: parseList('CONTENT_PLAN'),
+        quickWins: parseList('QUICK_WINS')
     };
 }
 
