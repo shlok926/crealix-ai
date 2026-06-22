@@ -6,16 +6,10 @@ const MODEL = 'meta-llama/llama-3.1-8b-instruct:free';
 
 // ── Core fetch wrapper ─────────────────────────────────────────
 async function callAI(systemPrompt, userPrompt) {
-    const apiKey = getApiKey();
-    if (!apiKey) throw new Error('API_KEY_MISSING');
-
-    const response = await fetch(API_URL, {
+    const response = await fetch('/api/openrouter', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`,
-            'HTTP-Referer': window.location.origin,
-            'X-Title': 'Crealix AI'
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({
             model: MODEL,
@@ -30,7 +24,6 @@ async function callAI(systemPrompt, userPrompt) {
 
     if (!response.ok) {
         const err = await response.json().catch(() => ({}));
-        if (response.status === 401) throw new Error('INVALID_API_KEY');
         if (response.status === 429) throw new Error('RATE_LIMITED');
         throw new Error(err.error?.message || `API error: ${response.status}`);
     }
@@ -40,14 +33,10 @@ async function callAI(systemPrompt, userPrompt) {
 
 // ── Vision Support ─────────────────────────────────────────────
 export async function analyzeImage(base64Image, userPrompt) {
-    const apiKey = getApiKey();
-    if (!apiKey) throw new Error('API_KEY_MISSING');
-
-    const response = await fetch(API_URL, {
+    const response = await fetch('/api/openrouter', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({
             model: 'google/gemini-flash-1.5', // Highly efficient for vision

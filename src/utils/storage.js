@@ -51,7 +51,7 @@ export async function syncAllFromCloud() {
 }
 
 // ── API Key ──────────────────────────────────────────────────
-export function getApiKey() { return localStorage.getItem(KEYS.API_KEY) || ''; }
+export function getApiKey() { return 'backend-proxy-active'; }
 export function setApiKey(key) { 
     localStorage.setItem(KEYS.API_KEY, key.trim()); 
     const user = auth.currentUser;

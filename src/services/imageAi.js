@@ -7,18 +7,13 @@ const API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const IMAGE_MODEL = 'black-forest-labs/flux-1-dev'; // Flux is amazing for Instagram aesthetics
 
 export async function generateAiImage(prompt, aspectRatio = '1:1') {
-    const apiKey = getApiKey();
-    if (!apiKey) throw new Error('API_KEY_MISSING');
 
     // Note: Image generation via Chat Completions is supported by some providers on OpenRouter
     // If not, we can easily switch to a dedicated image API.
-    const response = await fetch(API_URL, {
+    const response = await fetch('/api/openrouter', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`,
-            'HTTP-Referer': window.location.origin,
-            'X-Title': 'Crealix AI'
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({
             model: IMAGE_MODEL,
@@ -46,12 +41,10 @@ export async function generateAiImage(prompt, aspectRatio = '1:1') {
 import { generateBios } from './ai.js'; // We can reuse callAI logic
 
 async function callAIGeneric(systemPrompt, userPrompt) {
-    const apiKey = getApiKey();
-    const response = await fetch(API_URL, {
+    const response = await fetch('/api/openrouter', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({
             model: 'meta-llama/llama-3.1-8b-instruct:free',
