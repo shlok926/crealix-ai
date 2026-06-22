@@ -5,7 +5,7 @@
 
 import { loginWithGoogle } from '../components/sidebar.js';
 import { auth } from '../services/firebase.js';
-import { RecaptchaVerifier, signInWithPhoneNumber, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { showToast } from '../components/toast.js';
 
 export function renderLoginPage(container) {
@@ -36,9 +36,7 @@ export function renderLoginPage(container) {
                     Continue with Google
                 </button>
 
-                <button class="btn btn-secondary mt-sm" id="login-phone-btn" style="width:100%; display:flex; align-items:center; justify-content:center; gap: 8px;">
-                    Continue with Phone Number
-                </button>
+
 
                 <button class="btn btn-secondary mt-sm" id="login-email-btn" style="width:100%; display:flex; align-items:center; justify-content:center; gap: 8px;">
                     Continue with Email
@@ -57,29 +55,6 @@ export function renderLoginPage(container) {
                 </div>
             </div>
 
-            <!-- Hidden Phone Input Form -->
-            <div id="login-phone-form" style="display:none; text-align:left;">
-                <label class="form-label">Phone Number</label>
-                <div style="display:flex; gap: 8px; margin-bottom: 24px;">
-                    <select class="form-input" id="phone-country" style="width: 80px; padding: 0 8px;">
-                        <option value="+91">+91</option>
-                        <option value="+1">+1</option>
-                        <option value="+44">+44</option>
-                    </select>
-                    <input type="tel" class="form-input" placeholder="9876543210" id="phone-input" style="flex:1;">
-                </div>
-                <button class="btn btn-primary" id="send-otp-btn" style="width:100%;">Send OTP</button>
-                <button class="btn btn-secondary mt-sm" id="back-to-options" style="width:100%;">← Back</button>
-                <div id="recaptcha-container" class="mt-sm"></div>
-            </div>
-
-            <!-- Hidden OTP Input Form -->
-            <div id="login-otp-form" style="display:none; text-align:left;">
-                <label class="form-label">Enter OTP</label>
-                <input type="text" class="form-input" placeholder="123456" id="otp-input" style="width:100%; letter-spacing: 4px; text-align:center; font-size:1.2rem; margin-bottom: 24px;">
-                <button class="btn btn-primary" id="verify-otp-btn" style="width:100%;">Verify & Login</button>
-                <button class="btn btn-secondary mt-sm" id="back-to-phone" style="width:100%;">← Back</button>
-            </div>
 
             <!-- Hidden Email Input Form -->
             <form id="login-email-form" style="display:none; text-align:left;">
@@ -107,75 +82,12 @@ export function renderLoginPage(container) {
         </div>
     </div>`;
 
-    let confirmationResult = null;
 
-    function initRecaptcha() {
-        if (!window.recaptchaVerifier) {
-            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-                'size': 'invisible'
-            });
-        }
-    }
 
     document.getElementById('login-google-primary')?.addEventListener('click', () => {
         loginWithGoogle().then(() => {
             // After successful login, router will naturally pick up auth state and redirect
         });
-    });
-
-    document.getElementById('login-phone-btn')?.addEventListener('click', () => {
-        document.getElementById('login-primary-options').style.display = 'none';
-        document.getElementById('login-phone-form').style.display = 'block';
-    });
-
-    document.getElementById('back-to-options')?.addEventListener('click', () => {
-        document.getElementById('login-phone-form').style.display = 'none';
-        document.getElementById('login-primary-options').style.display = 'block';
-    });
-
-    document.getElementById('send-otp-btn')?.addEventListener('click', () => {
-        const countryCode = document.getElementById('phone-country').value;
-        const phone = document.getElementById('phone-input').value;
-        if (!phone) {
-            showToast('Please enter a valid phone number', 'error');
-            return;
-        }
-        
-        const phoneNumber = countryCode + phone;
-        initRecaptcha();
-        const appVerifier = window.recaptchaVerifier;
-
-        signInWithPhoneNumber(auth, phoneNumber, appVerifier)
-            .then((result) => {
-                confirmationResult = result;
-                document.getElementById('login-phone-form').style.display = 'none';
-                document.getElementById('login-otp-form').style.display = 'block';
-                showToast('OTP sent successfully!', 'success');
-            }).catch((error) => {
-                showToast('Failed to send OTP: ' + error.message, 'error');
-                if (window.recaptchaVerifier) {
-                    window.recaptchaVerifier.render().then(widgetId => {
-                        grecaptcha.reset(widgetId);
-                    });
-                }
-            });
-    });
-
-    document.getElementById('verify-otp-btn')?.addEventListener('click', () => {
-        const otp = document.getElementById('otp-input').value;
-        if (!otp || !confirmationResult) return;
-        
-        confirmationResult.confirm(otp).then((result) => {
-            showToast('Phone verified successfully!', 'success');
-            // Auth listener in main.js will auto-redirect
-        }).catch((error) => {
-            showToast('Invalid OTP: ' + error.message, 'error');
-        });
-    });
-
-    document.getElementById('back-to-phone')?.addEventListener('click', () => {
-        document.getElementById('login-otp-form').style.display = 'none';
-        document.getElementById('login-phone-form').style.display = 'block';
     });
 
     let isEmailSignUp = false;
